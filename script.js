@@ -129,7 +129,7 @@ if (logo && modal) {
     });
 }
 
-// Chatbot
+// Chatbot - Updated with smooth show/hide behavior
 let greeted = false;
 const chatToggle = document.getElementById('chat-toggle');
 const chatbot = document.getElementById('chatbot');
@@ -140,42 +140,101 @@ const chatMessages = document.querySelector('.chat-messages');
 const suggestions = document.querySelectorAll('.suggestion');
 
 const chatResponses = {
-    "about you": "I'm Shivam Sharma, an AI/ML student passionate about deep learning, computer vision, and ethical AI. Check my projects for more!",
-    "projects": "📁 I’ve worked on BoardPrep (a study app), AI Law Chatbot, and Dermaware (skin health concept). See the Projects section!",
-    "skills": "🛠️ I’m skilled in Python, TensorFlow, OpenCV, Firebase, LangChain, and more. See the Skills section!",
-    "contact": "📬 You can reach me via the Contact form or you can also call me at: 9330087464.",
-    "hello": "👋 Hello! What can I help you with today?",
-    "hi": "👋 Hi there! How can I assist you?",
-    "default": "❗ Sorry, I didn’t understand that. Try asking about my projects, skills, or contact info!"
+    "about": "I'm Shivam Sharma, an AI/ML student passionate about deep learning, computer vision, and ethical AI. Check my projects for more!",
+    "projects": "I've worked on Weather App, Attendance Tracker, and NeuraGo AI Chatbot. See the Projects section for details!",
+    "skills": "I'm skilled in Python, TensorFlow, OpenCV, Firebase, LangChain, Flutter, and more. Check the Skills section!",
+    "contact": "You can reach me via the Contact form or email: shivam17sharma2004@gmail.com",
+    "hello": "Hello! What can I help you with today?",
+    "hi": "Hi there! How can I assist you?",
+    "help": "I can tell you about my projects, skills, experience, or contact information. What would you like to know?",
+    "experience": "I'm currently pursuing CSE with AI/ML specialization and have worked on various projects in machine learning and web development.",
+    "default": "I didn't understand that. Try asking about my projects, skills, or contact info!"
 };
 
-if (chatToggle && chatbot && chatClose && chatInput && chatSend && chatMessages) {
-    chatToggle.addEventListener('click', () => {
-        chatbot.style.display = chatbot.style.display === 'block' ? 'none' : 'block';
-        if (!greeted && chatbot.style.display === 'block') {
-            addMessage('bot', "👋 Hello Sir/Mam! Welcome to Shivam's Chatbot. How may I help you?");
-            greeted = true;
+function openChatbot() {
+    if (chatToggle && chatbot) {
+        // Hide the toggle button with animation
+        chatToggle.classList.add('hide');
+        
+        // Show chatbot after a brief delay
+        setTimeout(() => {
+            chatbot.classList.add('show');
+            
+            // Send greeting message if first time
+            if (!greeted) {
+                setTimeout(() => {
+                    addMessage('bot', "Hello! Welcome to Shivam's Portfolio. How may I help you?");
+                    greeted = true;
+                }, 300);
+            }
+            
+            // Focus on input
+            if (chatInput) {
+                setTimeout(() => chatInput.focus(), 400);
+            }
+        }, 150);
+    }
+}
+
+function closeChatbot() {
+    if (chatToggle && chatbot) {
+        // Hide chatbot
+        chatbot.classList.remove('show');
+        
+        // Show toggle button after chatbot is hidden
+        setTimeout(() => {
+            chatToggle.classList.remove('hide');
+        }, 300);
+    }
+}
+
+// Event listeners
+if (chatToggle) {
+    chatToggle.addEventListener('click', openChatbot);
+}
+
+if (chatClose) {
+    chatClose.addEventListener('click', closeChatbot);
+}
+
+if (chatSend) {
+    chatSend.addEventListener('click', sendMessage);
+}
+
+if (chatInput) {
+    chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            sendMessage();
         }
     });
-
-    chatClose.addEventListener('click', () => {
-        chatbot.style.display = 'none';
-    });
-
-    chatSend.addEventListener('click', sendMessage);
-    chatInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') sendMessage();
-    });
-
-    suggestions.forEach(btn => {
-        btn.addEventListener('click', () => {
-            if (chatInput) {
-                chatInput.value = btn.textContent.toLowerCase();
-                sendMessage();
-            }
-        });
-    });
 }
+
+// Handle suggestion clicks
+suggestions.forEach(btn => {
+    btn.addEventListener('click', () => {
+        if (chatInput) {
+            chatInput.value = btn.textContent.toLowerCase();
+            sendMessage();
+        }
+    });
+});
+
+// Close chatbot when clicking outside
+document.addEventListener('click', (e) => {
+    if (chatbot && chatbot.classList.contains('show')) {
+        if (!chatbot.contains(e.target) && !chatToggle.contains(e.target)) {
+            closeChatbot();
+        }
+    }
+});
+
+// Close chatbot with Escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && chatbot && chatbot.classList.contains('show')) {
+        closeChatbot();
+    }
+});
 
 function sendMessage() {
     if (!chatInput) return;
@@ -183,70 +242,117 @@ function sendMessage() {
     if (!message) return;
 
     addMessage('user', message);
-
-    const cleaned = message.toLowerCase();
-    const matchedKey = Object.keys(chatResponses).find(key => cleaned.includes(key));
-    const response = chatResponses[matchedKey] || chatResponses["default"];
-
-    setTimeout(() => addMessage('bot', response), 500);
     chatInput.value = '';
+
+    // Find response
+    const cleaned = message.toLowerCase();
+    let response = chatResponses["default"];
+    
+    for (const [key, value] of Object.entries(chatResponses)) {
+        if (cleaned.includes(key)) {
+            response = value;
+            break;
+        }
+    }
+
+    // Add bot response with delay
+    setTimeout(() => addMessage('bot', response), 600);
 }
 
 function addMessage(type, text) {
     if (!chatMessages) return;
+    
     const messageDiv = document.createElement('div');
     messageDiv.classList.add('message', type);
     messageDiv.textContent = text;
-    messageDiv.style.padding = '0.625rem 0.9375rem';
-    messageDiv.style.margin = '0.375rem';
-    messageDiv.style.borderRadius = '0.75rem';
-    messageDiv.style.maxWidth = '80%';
-    messageDiv.style.alignSelf = type === 'user' ? 'flex-end' : 'flex-start';
-    messageDiv.style.background = type === 'user' ? 'var(--neon)' : 'rgba(255, 255, 255, 0.05)';
-    messageDiv.style.color = type === 'user' ? 'var(--dark)' : 'var(--light)';
-    messageDiv.style.boxShadow = '0 0.125rem 0.375rem rgba(0, 0, 0, 0.2)';
-
+    
     chatMessages.appendChild(messageDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
-document.getElementById("contact-form").addEventListener("submit", function (e) {
-  e.preventDefault();
 
-  const form = e.target;
-  const formData = new FormData(form);
-  const popup = document.getElementById("success-popup");
+// Contact Form - Fixed version
+const contactForm = document.getElementById("form");
+const successPopup = document.getElementById("success-popup");
 
-  fetch("https://formspree.io/f/xgvyrjqn", {
-    method: "POST",
-    headers: { Accept: "application/json" },
-    body: formData,
-  })
-    .then((response) => {
-      if (response.ok) {
-        form.reset();
-        popup.classList.add("show");
-        setTimeout(() => popup.classList.remove("show"), 3000);
-      } else {
-        alert("❌ Something went wrong. Please try again.");
-      }
-    })
-    .catch(() => {
-      alert("❌ Network error. Please try again later.");
+if (contactForm && successPopup) {
+    contactForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(contactForm);
+        const submitBtn = document.getElementById("submit-btn");
+        const btnText = submitBtn.querySelector(".btn-text");
+        const btnSpinner = submitBtn.querySelector(".btn-spinner");
+        const formStatus = document.getElementById("form-status");
+
+        // Show loading state
+        if (btnText) btnText.style.display = "none";
+        if (btnSpinner) btnSpinner.style.display = "inline-block";
+        submitBtn.disabled = true;
+
+        fetch("https://formspree.io/f/xgvyrjqn", {
+            method: "POST",
+            headers: { Accept: "application/json" },
+            body: formData,
+        })
+        .then((response) => {
+            if (response.ok) {
+                // Success
+                contactForm.reset();
+                contactForm.classList.add("form-success");
+                successPopup.classList.add("show");
+                
+                if (formStatus) {
+                    formStatus.textContent = "Message sent successfully!";
+                    formStatus.className = "success";
+                    formStatus.style.display = "block";
+                }
+
+                setTimeout(() => {
+                    successPopup.classList.remove("show");
+                    contactForm.classList.remove("form-success");
+                    if (formStatus) formStatus.style.display = "none";
+                }, 3000);
+            } else {
+                throw new Error("Form submission failed");
+            }
+        })
+        .catch((error) => {
+            // Error
+            contactForm.classList.add("form-error");
+            
+            if (formStatus) {
+                formStatus.textContent = "Something went wrong. Please try again.";
+                formStatus.className = "error";
+                formStatus.style.display = "block";
+            }
+
+            setTimeout(() => {
+                contactForm.classList.remove("form-error");
+                if (formStatus) formStatus.style.display = "none";
+            }, 3000);
+        })
+        .finally(() => {
+            // Reset button state
+            if (btnText) btnText.style.display = "inline";
+            if (btnSpinner) btnSpinner.style.display = "none";
+            submitBtn.disabled = false;
+        });
     });
-});
-
+}
 
 // Lazy Load Images
 const lazyImages = document.querySelectorAll('img[data-src]');
-const lazyLoad = new IntersectionObserver((entries, observer) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            const img = entry.target;
-            img.src = img.dataset.src || img.src;
-            img.removeAttribute('data-src');
-            observer.unobserve(img);
-        }
-    });
-}, { threshold: 0.1 });
+if (lazyImages.length > 0) {
+    const lazyLoad = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                img.src = img.dataset.src || img.src;
+                img.removeAttribute('data-src');
+                observer.unobserve(img);
+            }
+        });
+    }, { threshold: 0.1 });
 
-lazyImages.forEach(img => lazyLoad.observe(img));
+    lazyImages.forEach(img => lazyLoad.observe(img));
+}

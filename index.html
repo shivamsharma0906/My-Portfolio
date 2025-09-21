@@ -182,68 +182,88 @@
         </div>
     </section>
 
-    <!-- Projects Section -->
     <section id="projects">
-        <div class="container">
-            <h2 class="fade-in">Featured Projects</h2>
-            <div class="project-filter fade-in delay-1">
-                <button class="filter-btn active" data-filter="all">All</button>
-                <button class="filter-btn" data-filter="flutter">Frontend</button>
-                <button class="filter-btn" data-filter="python">Python</button>
-                <button class="filter-btn" data-filter="ai">AI/ML</button>
-            </div>
-            <div class="projects-grid">
-                <!-- Weather App -->
-                <div class="project-card fade-in" data-tech="frontend html css javascript api">
+    <div class="container">
+        <h2 class="fade-in section-title">Featured Projects</h2>
+        <div class="projects-grid">
+            <!-- Weather App -->
+            <div class="project-card fade-in" data-tech="frontend html css javascript api">
+                <div class="project-header">
                     <h3><i class="fas fa-cloud-sun-rain"></i> Weather Update App</h3>
-                    <p>A responsive weather app using HTML, CSS, JavaScript, and OpenWeatherMap API. Features
-                        geolocation,
-                        5-day forecast, animated icons, theme toggle, and dynamic background.</p>
-                    <div class="tech-tags">
-                        <span class="tag">HTML</span>
-                        <span class="tag">CSS</span>
-                        <span class="tag">JavaScript</span>
-                        <span class="tag">API</span>
+                    
+                </div>
+                <p class="project-desc">
+                    A responsive weather app using HTML, CSS, JavaScript, and OpenWeatherMap API. Features geolocation, 5-day forecast, animated icons, theme toggle, and dynamic background.
+                </p>
+                <div class="project-tech-tags">
+                        <span class="tech-item html">HTML</span>
+                        <span class="tech-item css">CSS</span>
+                        <span class="tech-item javascript">JavaScript</span>
+                        <span class="tech-item api">API</span>
                     </div>
-                    <a href="https://github.com/shivamsharma0906/Weather-App" class="project-link" target="_blank">
+                <div class="project-links">
+                    <a href="https://github.com/shivamsharma0906/Weather-App" class="project-link" target="_blank" aria-label="View Source Code on GitHub">
                         <i class="fab fa-github"></i> Source Code
                     </a>
-                </div>
-                <!-- Savvy Attendance Tracker -->
-                <div class="project-card fade-in" data-tech="flutter firebase">
-                    <h3><i class="fas fa-user-check"></i> Savvy Attendance Tracker</h3>
-                    <p>A smart attendance tracking app built using Flutter and Firebase. Features user login, student
-                        record
-                        management, and real-time updates.</p>
-                    <div class="tech-tags">
-                        <span class="tag">Flutter</span>
-                        <span class="tag">Firebase</span>
-                    </div>
-                    <a href="https://github.com/shivamsharma0906/savvy-attendance-tracker" class="project-link"
-                        target="_blank">
-                        <i class="fab fa-github"></i> Source Code
-                    </a>
-                </div>
-                <!-- NeuraGo AI Chatbot -->
-                <div class="project-card fade-in" data-tech="python ai langchain streamlit">
-                    <h3><i class="fas fa-brain"></i> NeuraGo – AI Law Chatbot <span class="badge">In Progress</span>
-                    </h3>
-                    <p>An AI-powered legal assistant built using LangChain and Streamlit. Designed to simplify legal
-                        queries
-                        with natural language. The project is under development with core logic and intent handling
-                        being
-                        implemented.</p>
-                    <div class="tech-tags">
-                        <span class="tag">Python</span>
-                        <span class="tag">LangChain</span>
-                        <span class="tag">Streamlit</span>
-                    </div>
-                    <a href="https://github.com/shivamsharma0906/NeuraGo" class="project-link" target="_blank">
-                        <i class="fab fa-github"></i> Source Code
+                    <a href="https://weather-app-navy-chi-12.vercel.app/" class="project-link live-demo" target="_blank" aria-label="View Live Demo">
+                        <i class="fas fa-external-link-alt"></i> Live Demo
                     </a>
                 </div>
             </div>
-    </section>
+
+            <!-- Upasthiti Attendance Tracker -->
+            <div class="project-card fade-in" data-tech="typescript mongodb reactjs nodejs firebase">
+                <div class="project-header">
+                    <h3><i class="fas fa-user-check"></i> Upasthiti Attendance Tracker</h3>
+                    
+                   
+                </div>
+                <p class="project-desc">
+                    Upasthiti is a smart attendance tracking web app built with TypeScript, React JS, Node.js, MongoDB, and Firebase. Features include secure user login, student record management, real-time attendance updates, and analytics for teachers and admins.
+                </p>
+                <div class="project-tech-tags">
+                        <span class="tech-item typescript">TypeScript</span>
+                        <span class="tech-item reactjs">React JS</span>
+                        <span class="tech-item nodejs">Node.js</span>
+                        <span class="tech-item mongodb">MongoDB</span>
+                        <span class="tech-item firebase">Firebase</span>
+                    </div>
+                <div class="project-links">
+                    <a href="https://github.com/shivamsharma0906/Upasthiti-Attendance-Tracker" class="project-link" target="_blank" aria-label="View Source Code on GitHub">
+                        <i class="fab fa-github"></i> Source Code
+                    </a>
+                    <a href="https://upasthiti-attendance-tracker.vercel.app/" class="project-link live-demo" target="_blank" aria-label="View Live Demo">
+                        <i class="fas fa-external-link-alt"></i> Live Demo
+                    </a>
+                </div>
+            </div>
+
+            <!-- Zomato Clone -->
+            <div class="project-card fade-in" data-tech="html css javascript">
+                <div class="project-header">
+                    <h3><i class="fas fa-hamburger"></i> Zomato Clone</h3>
+                    
+                </div>
+                <p class="project-desc">
+                    A front-end clone of the popular food delivery platform <b>Zomato</b>, built with HTML, CSS, and JavaScript. It replicates the landing page with hero section, background images, and responsive design to practice UI/UX implementation.
+                </p>
+                <div class="project-tech-tags">
+                        <span class="tech-item html">HTML</span>
+                        <span class="tech-item css">CSS</span>
+                        <span class="tech-item javascript">JavaScript</span>
+                    </div>
+                <div class="project-links">
+                    <a href="https://github.com/shivamsharma0906/Zomato-Clone/tree/main" class="project-link" target="_blank" aria-label="View Source Code on GitHub">
+                        <i class="fab fa-github"></i> Source Code
+                    </a>
+                    <a href="https://zomato-clone-red-six.vercel.app/" class="project-link live-demo" target="_blank" aria-label="View Live Demo">
+                        <i class="fas fa-external-link-alt"></i> Live Demo
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
     <!-- Skills Section -->
     <section id="skills">
@@ -374,14 +394,14 @@
     </section> -->
 
     <!-- CTA Section -->
-    <section id="cta">
+    <!-- <section id="cta">
         <div class="container fade-in delay-3">
             <div class="cta-banner">
                 <h2>Let’s Collaborate on Something Amazing!</h2>
                 <a href="#contact" class="cta-btn" aria-label="Contact Me">Contact Me</a>
             </div>
         </div>
-    </section>
+    </section> -->
 
     <!-- Contact Section -->
     <section id="contact">
