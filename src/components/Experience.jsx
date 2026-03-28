@@ -1,0 +1,392 @@
+import { useEffect, useRef, useState } from 'react'
+
+/* ─── Styles ──────────────────────────────────────────────────────────── */
+const STYLES = `
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=JetBrains+Mono:wght@300;400;500&family=Instrument+Sans:wght@400;500&display=swap');
+
+  :root {
+    --bg:       #04040a;
+    --surface:  #0a0a14;
+    --surface2: #0f0f1c;
+    --cyan:     #00f0ff;
+    --cyan-dim: rgba(0,240,255,0.07);
+    --cyan-mid: rgba(0,240,255,0.18);
+    --green:    #00ff88;
+    --amber:    #ffb800;
+    --white:    #eeeef2;
+    --muted:    #6b6b80;
+    --border:   rgba(255,255,255,0.06);
+    --border-h: rgba(0,240,255,0.22);
+  }
+
+  /* ── Section ── */
+  #experience {
+    position: relative;
+    padding: 140px 0 160px;
+    background: var(--bg);
+    overflow: hidden;
+  }
+  #experience::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 10%, transparent 100%);
+    pointer-events: none;
+  }
+
+  .exp-container {
+    position: relative;
+    z-index: 1;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 48px;
+  }
+
+  /* ── Header ── */
+  .exp-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 16px;
+    opacity: 0; transform: translateY(12px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .exp-eyebrow::before { content: ''; width: 28px; height: 1px; background: var(--cyan); }
+  .exp-eyebrow.vis { opacity: 1; transform: translateY(0); }
+
+  .exp-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 800; line-height: 0.95; letter-spacing: -0.03em;
+    color: var(--white);
+    margin-bottom: 80px;
+    opacity: 0; transform: translateY(20px);
+    transition: opacity 0.7s ease 0.1s, transform 0.7s ease 0.1s;
+  }
+  .exp-title em { font-style: normal; -webkit-text-stroke: 1px var(--cyan); color: transparent; }
+  .exp-title.vis { opacity: 1; transform: translateY(0); }
+
+  /* ── Timeline layout ── */
+  .exp-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    position: relative;
+  }
+
+  /* vertical spine */
+  .exp-timeline::before {
+    content: '';
+    position: absolute;
+    left: 28px;
+    top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, var(--border) 10%, var(--border) 90%, transparent);
+    pointer-events: none;
+  }
+
+  /* ── Timeline item ── */
+  .exp-item {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 24px;
+    align-items: start;
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .exp-item.vis { opacity: 1; transform: translateY(0); }
+
+  /* dot column */
+  .exp-dot-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+    position: relative;
+  }
+  .exp-dot {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: var(--bg);
+    position: relative;
+    z-index: 1;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    flex-shrink: 0;
+  }
+  .exp-item:hover .exp-dot {
+    border-color: var(--cyan);
+    box-shadow: 0 0 10px var(--cyan);
+  }
+  .exp-dot-inner {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--muted);
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    transition: background 0.3s;
+  }
+  .exp-item:hover .exp-dot-inner { background: var(--cyan); }
+
+  /* ── Card ── */
+  .exp-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 32px 36px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.35s, background 0.35s;
+    cursor: default;
+  }
+  .exp-card:hover { border-color: var(--border-h); background: var(--surface2); }
+
+  /* corner */
+  .exp-card::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 0; height: 0;
+    border-style: solid;
+    border-width: 0 32px 32px 0;
+    border-color: transparent var(--surface2) transparent transparent;
+    transition: border-color 0.35s;
+  }
+  .exp-card:hover::before { border-color: transparent var(--bg) transparent transparent; }
+
+  /* scan sweep */
+  .exp-card::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; height: 60px;
+    background: linear-gradient(to bottom, transparent, rgba(0,240,255,0.03), transparent);
+    top: -60px; pointer-events: none;
+  }
+  .exp-card:hover::after { animation: expScan 1s cubic-bezier(.22,1,.36,1) forwards; }
+
+  .exp-card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    gap: 16px;
+  }
+
+  .exp-date-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 14px;
+    border: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    background: var(--cyan-dim);
+    flex-shrink: 0;
+  }
+  .exp-date-badge::before {
+    content: '';
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--cyan);
+    box-shadow: 0 0 5px var(--cyan);
+  }
+
+  .exp-card-id {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: var(--border);
+    transition: color 0.3s;
+  }
+  .exp-card:hover .exp-card-id { color: var(--cyan-mid); }
+
+  .exp-role {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px; font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--white);
+    margin-bottom: 6px;
+    transition: color 0.3s;
+  }
+
+  .exp-org {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .exp-org i { color: var(--cyan); opacity: 0.7; font-size: 13px; }
+
+  .exp-desc {
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.75;
+    color: var(--muted);
+    transition: color 0.3s;
+  }
+  .exp-card:hover .exp-desc { color: #8a8aa0; }
+
+  /* tags */
+  .exp-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 20px;
+  }
+  .exp-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    transition: color 0.25s, border-color 0.25s;
+  }
+  .exp-card:hover .exp-tag { color: var(--cyan); border-color: rgba(0,240,255,0.2); }
+
+  /* ── Keyframes ── */
+  @keyframes expScan {
+    0%   { top: -60px; }
+    100% { top: calc(100% + 60px); }
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .exp-container { padding: 0 24px; }
+    .exp-timeline::before { left: 20px; }
+    .exp-item { grid-template-columns: 40px 1fr; gap: 16px; }
+    .exp-card { padding: 24px 20px; }
+    .exp-card-top { flex-direction: column; }
+  }
+`
+
+/* ─── Reveal hook ─────────────────────────────────────────────────────── */
+function useReveal(ref, threshold = 0.1) {
+  const [vis, setVis] = useState(false)
+  useEffect(() => {
+    const el = ref?.current
+    if (!el) return
+    const obs = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) { setVis(true); obs.disconnect() } },
+      { threshold }
+    )
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [ref, threshold])
+  return vis
+}
+
+/* ─── Data ────────────────────────────────────────────────────────────── */
+const ITEMS = [
+  {
+    id: 'EXP_01',
+    date: '2024 – Present',
+    role: 'B.Tech in CSE (AI/ML)',
+    org: 'Techno Main SaltLake',
+    icon: 'fas fa-university',
+    desc: 'Currently specializing in Artificial Intelligence and Machine Learning. Building a strong foundation in Data Structures, Algorithms, and Deep Learning architectures while working on real-world AI projects.',
+    tags: ['Deep Learning', 'Algorithms', 'AI/ML', 'DSA'],
+  },
+  {
+    id: 'EXP_02',
+    date: '2026 – Present',
+    role: 'AI/ML Self-Directed Learner',
+    org: 'Independent',
+    icon: 'fas fa-laptop-code',
+    desc: 'Actively developing skills in Computer Vision and NLP through hands-on projects like weather forecasting apps, attendance tracking systems, and LangChain chatbots. Contributing to open-source AI communities.',
+    tags: ['Computer Vision', 'NLP', 'LangChain', 'OpenCV'],
+  },
+]
+
+/* ─── Component ───────────────────────────────────────────────────────── */
+export default function Experience() {
+  const [injected, setInjected] = useState(false)
+  const headRef = useRef(null)
+  const headVis = useReveal(headRef, 0.08)
+
+  useEffect(() => {
+    if (injected) return
+    const tag = document.createElement('style')
+    tag.textContent = STYLES
+    document.head.appendChild(tag)
+    setInjected(true)
+  }, [injected])
+
+  return (
+    <section id="experience">
+      <div className="exp-container">
+
+        {/* Header */}
+        <div ref={headRef}>
+          <p className={`exp-eyebrow${headVis ? ' vis' : ''}`}>Career Path</p>
+          <h2 className={`exp-title${headVis ? ' vis' : ''}`}>
+            Experience &amp; <em>Education</em>
+          </h2>
+        </div>
+
+        {/* Timeline */}
+        <div className="exp-timeline">
+          {ITEMS.map((item, idx) => (
+            <ExpItem key={item.id} item={item} index={idx} />
+          ))}
+        </div>
+
+      </div>
+    </section>
+  )
+}
+
+function ExpItem({ item, index }) {
+  const ref = useRef(null)
+  const vis = useReveal(ref, 0.1)
+
+  return (
+    <div
+      ref={ref}
+      className={`exp-item${vis ? ' vis' : ''}`}
+      style={{ transitionDelay: vis ? `${index * 0.15}s` : '0s' }}
+    >
+      {/* Dot */}
+      <div className="exp-dot-col">
+        <div className="exp-dot">
+          <div className="exp-dot-inner" />
+        </div>
+      </div>
+
+      {/* Card */}
+      <div className="exp-card">
+        <div className="exp-card-top">
+          <div>
+            <span className="exp-date-badge">{item.date}</span>
+          </div>
+          <span className="exp-card-id" aria-hidden="true">{item.id}</span>
+        </div>
+        <h3 className="exp-role">{item.role}</h3>
+        <p className="exp-org">
+          <i className={item.icon} aria-hidden="true" />
+          {item.org}
+        </p>
+        <p className="exp-desc">{item.desc}</p>
+        <div className="exp-tags">
+          {item.tags.map(t => (
+            <span key={t} className="exp-tag">{t}</span>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}

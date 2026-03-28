@@ -1,0 +1,105 @@
+/* ═══════════════════════════════════════════════════
+   Global Reset & Base — all section styles are
+   self-contained in each component via injected <style>
+═══════════════════════════════════════════════════ */
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #04040a;
+  color: #eeeef2;
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar        { width: 6px; }
+::-webkit-scrollbar-track  { background: #04040a; }
+::-webkit-scrollbar-thumb  { background: rgba(0,240,255,0.15); }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,240,255,0.3); }
+
+/* ── Selection ── */
+::selection {
+  background: rgba(0,240,255,0.2);
+  color: #eeeef2;
+}
+
+/* ── Particles canvas ── */
+#particles-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* ── Fade-in animation base (used by useFadeIn hook) ── */
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.delay-1 { transition-delay: 0.1s; }
+.delay-2 { transition-delay: 0.2s; }
+.delay-3 { transition-delay: 0.3s; }
+.delay-4 { transition-delay: 0.4s; }
+.delay-5 { transition-delay: 0.5s; }
+
+/* ── Aurora layer stacking ── */
+main, footer {
+  position: relative;
+  z-index: 2;
+}
+
+/* Semi-transparent sections so aurora bleeds through */
+#hero, #about, #experience, #ai-ml-expertise,
+#projects, #skills, #what-i-do, #contact {
+  background: rgba(4,4,10,0.75) !important;
+}
+
+/* Hero slightly more open */
+#hero { background: rgba(4,4,10,0.58) !important; }
+
+/* Cards stay opaque for readability */
+.proj-card, .wid-card, .aiml-card, .exp-card,
+.about-text-panel, .contact-info, .contact-form-panel,
+.skills-sidebar, .skills-panel {
+  background: rgba(10,10,20,0.9) !important;
+}
+
+/* Footer */
+.site-footer {
+  position: relative;
+  z-index: 2;
+  background: rgba(8,8,16,0.92) !important;
+}

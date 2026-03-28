@@ -1,0 +1,209 @@
+import { useEffect, useState } from 'react'
+
+const STYLES = `
+  /* ═══════════════════════════════════════════════════
+     AURORA BACKGROUND — Performance-optimised version
+     
+     KEY PERF CHANGES vs previous:
+     • NO filter: blur() — replaced with radial-gradient backgrounds
+       (blur forces rasterisation + GPU upload every frame)
+     • NO mix-blend-mode: screen — forces a compositing layer per element
+     • Reduced to 4 blobs (was 6)
+     • will-change: transform (promotes to own GPU layer, avoids repaint)
+     • transform: translateZ(0) — GPU layer hint
+     • animation-fill-mode: both to reduce style recalcs
+     • Removed SVG noise (caused layout thrash on some browsers)
+     • Grid & scan lines kept (cheap – no filter/blend)
+  ═══════════════════════════════════════════════════ */
+
+  .aurora-root {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  /* ── Base multi-stop gradient (static, zero cost) ── */
+  .aurora-root::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 100% 60% at 15% 5%,  rgba(0,240,255,0.07)  0%, transparent 60%),
+      radial-gradient(ellipse 70%  50% at 85% 0%,  rgba(168,85,247,0.08)  0%, transparent 55%),
+      radial-gradient(ellipse 80%  45% at 50% 95%, rgba(0,255,136,0.055) 0%, transparent 60%),
+      radial-gradient(ellipse 55%  70% at 90% 55%, rgba(168,85,247,0.05)  0%, transparent 55%);
+    pointer-events: none;
+  }
+
+  /* ── Blob base — uses radial-gradient, NO blur ── */
+  .aurora-blob {
+    position: absolute;
+    border-radius: 50%;
+    will-change: transform;
+    transform: translateZ(0);
+  }
+
+  /* Cyan – top left */
+  .aurora-b1 {
+    width: 800px; height: 600px;
+    top: -250px; left: -150px;
+    background: radial-gradient(ellipse at center,
+      rgba(0,240,255,0.13)  0%,
+      rgba(0,180,255,0.06)  40%,
+      transparent           75%);
+    animation: aBlob1 20s ease-in-out infinite alternate;
+  }
+
+  /* Purple – top right */
+  .aurora-b2 {
+    width: 650px; height: 550px;
+    top: 0; right: -180px;
+    background: radial-gradient(ellipse at center,
+      rgba(168,85,247,0.14) 0%,
+      rgba(120,40,220,0.05) 45%,
+      transparent           72%);
+    animation: aBlob2 24s ease-in-out infinite alternate;
+  }
+
+  /* Green – bottom center */
+  .aurora-b3 {
+    width: 700px; height: 500px;
+    bottom: 0; left: 15%;
+    background: radial-gradient(ellipse at center,
+      rgba(0,255,136,0.09)  0%,
+      rgba(0,200,100,0.04)  45%,
+      transparent           72%);
+    animation: aBlob3 28s ease-in-out infinite alternate;
+  }
+
+  /* Mixed amber/purple – mid right */
+  .aurora-b4 {
+    width: 500px; height: 420px;
+    bottom: 25%; right: 0;
+    background: radial-gradient(ellipse at center,
+      rgba(255,184,0,0.06)  0%,
+      rgba(168,85,247,0.04) 40%,
+      transparent           70%);
+    animation: aBlob4 22s ease-in-out infinite alternate;
+  }
+
+  /* ── Smooth, low-complexity keyframes ── */
+  /* Using only transform (GPU-composited, zero repaint) */
+  @keyframes aBlob1 {
+    from { transform: translate3d(0,     0px, 0) scale(1.0); }
+    to   { transform: translate3d(160px, 80px, 0) scale(1.18); }
+  }
+  @keyframes aBlob2 {
+    from { transform: translate3d(0,    0px, 0) scale(1.0); }
+    to   { transform: translate3d(-140px, 100px, 0) scale(1.12); }
+  }
+  @keyframes aBlob3 {
+    from { transform: translate3d(0,   0px, 0) scale(1.0); }
+    to   { transform: translate3d(90px, -70px, 0) scale(1.15); }
+  }
+  @keyframes aBlob4 {
+    from { transform: translate3d(0,    0px, 0) scale(1.0); }
+    to   { transform: translate3d(-80px, -90px, 0) scale(1.1); }
+  }
+
+  /* ── Floating geometry (cheap — just border, no fill) ── */
+  .aurora-geo {
+    position: absolute;
+    border: 1px solid;
+    will-change: transform;
+    transform: translateZ(0);
+  }
+  .aurora-geo-1 {
+    width: 260px; height: 260px;
+    top: 10%; right: 14%;
+    border-color: rgba(0,240,255,0.06);
+    animation: gFloat1 22s ease-in-out infinite;
+  }
+  .aurora-geo-2 {
+    width: 180px; height: 180px;
+    bottom: 18%; left: 7%;
+    border-color: rgba(168,85,247,0.07);
+    animation: gFloat2 26s ease-in-out infinite;
+  }
+  @keyframes gFloat1 {
+    0%, 100% { transform: translate3d(0, 0px, 0) rotate(15deg); opacity: 0.35; }
+    50%       { transform: translate3d(0, -28px, 0) rotate(22deg); opacity: 0.6; }
+  }
+  @keyframes gFloat2 {
+    0%, 100% { transform: translate3d(0, 0px, 0) rotate(30deg); opacity: 0.3; }
+    50%       { transform: translate3d(0, -20px, 0) rotate(24deg); opacity: 0.55; }
+  }
+
+  /* ── Scan-line sweep ── */
+  .aurora-scan {
+    position: absolute;
+    left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(0,240,255,0.3) 35%,
+      rgba(0,255,136,0.2) 65%,
+      transparent 100%);
+    animation: scanLine 14s linear infinite;
+    opacity: 0;
+    will-change: top, opacity;
+  }
+  .aurora-scan-2 {
+    background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(168,85,247,0.22) 40%,
+      rgba(0,240,255,0.14) 60%,
+      transparent 100%);
+    animation: scanLine 14s linear infinite;
+    animation-delay: -7s;
+  }
+  @keyframes scanLine {
+    0%   { top: -2px;   opacity: 0; }
+    3%   {              opacity: 0.7; }
+    97%  {              opacity: 0.4; }
+    100% { top: 100vh;  opacity: 0; }
+  }
+
+  /* ── Subtle dot grid ── */
+  .aurora-grid {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(0,240,255,0.08) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse 90% 90% at 50% 50%, black 10%, transparent 100%);
+    opacity: 0.5;
+    animation: gridPulse 10s ease-in-out infinite;
+  }
+  @keyframes gridPulse {
+    0%, 100% { opacity: 0.4; }
+    50%       { opacity: 0.75; }
+  }
+`
+
+export default function AuroraBackground() {
+  const [injected, setInjected] = useState(false)
+
+  useEffect(() => {
+    if (injected) return
+    const tag = document.createElement('style')
+    tag.textContent = STYLES
+    document.head.appendChild(tag)
+    setInjected(true)
+  }, [injected])
+
+  return (
+    <div className="aurora-root" aria-hidden="true">
+      <div className="aurora-blob aurora-b1" />
+      <div className="aurora-blob aurora-b2" />
+      <div className="aurora-blob aurora-b3" />
+      <div className="aurora-blob aurora-b4" />
+      <div className="aurora-geo  aurora-geo-1" />
+      <div className="aurora-geo  aurora-geo-2" />
+      <div className="aurora-scan" />
+      <div className="aurora-scan aurora-scan-2" />
+      <div className="aurora-grid" />
+    </div>
+  )
+}
