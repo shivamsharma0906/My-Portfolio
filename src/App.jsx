@@ -1,5 +1,5 @@
 import AuroraBackground from './components/AuroraBackground'
-import ParticlesCanvas from './components/ParticlesCanvas'
+import ThreeCanvas from './components/ThreeCanvas'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import About from './components/About'
@@ -18,8 +18,8 @@ function App() {
 
   return (
     <>
+      <ThreeCanvas />
       <AuroraBackground />
-      <ParticlesCanvas />
       <Navbar />
       <main>
         <Hero />

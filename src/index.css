@@ -9,6 +9,20 @@
   box-sizing: border-box;
 }
 
+:root {
+  --stroke-w: 1px;
+  --stroke-w-hero: 1.5px;
+  --stroke-c: transparent;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --stroke-w: 0px;
+    --stroke-w-hero: 0.5px;
+    --stroke-c: var(--cyan);
+  }
+}
+
 html {
   scroll-behavior: smooth;
 }
