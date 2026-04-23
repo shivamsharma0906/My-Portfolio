@@ -16,8 +16,8 @@ function useTyping(words) {
       el.textContent = del ? w.slice(0, ci - 1) : w.slice(0, ci + 1)
       del ? ci-- : ci++
       let speed = del ? 45 : 140
-      if (!del && ci === w.length)  { del = true;  speed = 2200 }
-      if (del  && ci === 0)         { del = false; wi = (wi + 1) % words.length; speed = 500 }
+      if (!del && ci === w.length) { del = true; speed = 2200 }
+      if (del && ci === 0) { del = false; wi = (wi + 1) % words.length; speed = 500 }
       tid = setTimeout(tick, speed)
     }
     tick()
@@ -47,8 +47,8 @@ const WORDS = ['AI/ML Engineer', 'Deep Learning Dev', 'Computer Vision', 'Proble
 /* ─── Component ───────────────────────────────────────────────────────── */
 export default function Hero() {
   const sectionRef = useRef(null)
-  const vis        = useReveal(sectionRef, 0.01)
-  const typingRef  = useTyping(WORDS)
+  const vis = useReveal(sectionRef, 0.01)
+  const typingRef = useTyping(WORDS)
 
   const avatarRef = useTilt({ max: 20, scale: 1.05, glare: true, maxGlare: 0.4 });
   const terminalRef = useTilt({ max: 12, scale: 1.02, glare: true, maxGlare: 0.2 });
@@ -116,11 +116,11 @@ export default function Hero() {
               >
                 <span>Explore Projects</span>
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                  <path d="M1 11L11 1M11 1H4M11 1v7" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M1 11L11 1M11 1H4M11 1v7" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </a>
               <a
-                href="/shivam-Resume.pdf"
+                href="/shivam_resume.pdf"
                 className="hero-cta-secondary"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -128,7 +128,7 @@ export default function Hero() {
               >
                 <span>Download CV</span>
                 <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                  <path d="M5 1v6M2 5l3 3 3-3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M5 1v6M2 5l3 3 3-3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </a>
             </div>
@@ -136,13 +136,13 @@ export default function Hero() {
             {/* stats */}
             <div className={`hero-stats${vis ? ' vis' : ''}`}>
               {[
-                { val: '4+',   label: 'Projects Shipped',   accent: true  },
-                { val: '2+',   label: 'Years of Learning',  accent: false },
-                { val: '15+',  label: 'Technologies',        accent: false },
+                { val: '4+', label: 'Projects Shipped', accent: true },
+                { val: '2+', label: 'Years of Learning', accent: false },
+                { val: '15+', label: 'Technologies', accent: false },
               ].map(s => (
                 <div key={s.label} className="hero-stat">
                   <div className="stat-val">
-                    {s.accent ? <><span>{s.val.replace('+','')}</span>+</> : s.val}
+                    {s.accent ? <><span>{s.val.replace('+', '')}</span>+</> : s.val}
                   </div>
                   <div className="stat-label">{s.label}</div>
                 </div>

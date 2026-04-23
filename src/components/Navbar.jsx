@@ -7,20 +7,20 @@ import './Navbar.css';
 
 /* ─── Sections for scroll spy ──────────────────────────────────────────── */
 const NAV_ITEMS = [
-  { label: 'About',    href: '#about'          },
-  { label: 'AI/ML',   href: '#ai-ml-expertise' },
-  { label: 'Projects', href: '#projects'        },
-  { label: 'Skills',  href: '#skills'           },
-  { label: 'Contact', href: '#contact'          },
+  { label: 'About', href: '#about' },
+  { label: 'AI/ML', href: '#ai-ml-expertise' },
+  { label: 'Projects', href: '#projects' },
+  { label: 'Skills', href: '#skills' },
+  { label: 'Contact', href: '#contact' },
 ]
 
 /* ─── Component ───────────────────────────────────────────────────────── */
 export default function Navbar() {
-  const [injected,  setInjected]  = useState(false)
-  const [scrolled,  setScrolled]  = useState(false)
-  const [progress,  setProgress]  = useState(0)
-  const [active,    setActive]    = useState('')
-  const [menuOpen,  setMenuOpen]  = useState(false)
+  const [injected, setInjected] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+  const [progress, setProgress] = useState(0)
+  const [active, setActive] = useState('')
+  const [menuOpen, setMenuOpen] = useState(false)
 
 
 
@@ -100,7 +100,7 @@ export default function Navbar() {
 
           {/* Resume CTA */}
           <a
-            href="/shivam-Resume.pdf"
+            href="/shivam_resume.pdf"
             className="nav-resume"
             target="_blank"
             rel="noopener noreferrer"
@@ -136,7 +136,7 @@ export default function Navbar() {
             </button>
           ))}
           <a
-            href="/shivam-Resume.pdf"
+            href="/shivam_resume.pdf"
             className="nav-drawer-link"
             target="_blank"
             rel="noopener noreferrer"
