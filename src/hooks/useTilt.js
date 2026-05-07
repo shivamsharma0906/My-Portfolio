@@ -54,42 +54,63 @@ export function useTilt({
     el.style.transformStyle = 'preserve-3d';
     el.style.transition = `transform ${speed}ms cubic-bezier(.03,.98,.52,.99)`;
 
-    const handlePointerMove = (e) => {
-      // Calculate mouse position relative to element center
-      const rect = el.getBoundingClientRect();
-      const x = e.clientX - rect.left; // x position within the element
-      const y = e.clientY - rect.top; // y position within the element
+    let animationFrameId = null;
+    let rectCache = null;
 
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
-
-      // Calculate percentage off center (-1 to 1)
-      const percentX = (x - centerX) / centerX;
-      const percentY = (y - centerY) / centerY;
-
-      // Calculate rotations
-      const rotateX = max * -percentY;
-      const rotateY = max * percentX;
-
-      // Apply transform
-      el.style.transition = 'transform 50ms linear';
-      el.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(${scale}, ${scale}, ${scale})`;
-
-      // Manage glare
+    const handlePointerEnter = () => {
+      rectCache = el.getBoundingClientRect();
+      el.style.transition = `transform ${speed}ms cubic-bezier(.03,.98,.52,.99)`;
       if (glareEl) {
-        // Move glare across the card
-        const glareX = percentX * 100;
-        const glareY = percentY * 100;
-        glareEl.style.transition = 'opacity 50ms linear, transform 50ms linear';
-        glareEl.style.transform = `translate(${glareX}%, ${glareY}%)`;
-        
-        // Intensity based on distance from center
-        const distance = Math.sqrt(percentX * percentX + percentY * percentY);
-        glareEl.style.opacity = Math.min(distance * maxGlare, maxGlare).toString();
+        glareEl.style.transition = `opacity ${speed}ms ease`;
       }
     };
 
+    const handlePointerMove = (e) => {
+      if (!rectCache) {
+        rectCache = el.getBoundingClientRect();
+      }
+
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
+
+      animationFrameId = requestAnimationFrame(() => {
+        // Calculate mouse position relative to element center
+        const x = e.clientX - rectCache.left; 
+        const y = e.clientY - rectCache.top; 
+
+        const centerX = rectCache.width / 2;
+        const centerY = rectCache.height / 2;
+
+        // Calculate percentage off center (-1 to 1)
+        const percentX = (x - centerX) / centerX;
+        const percentY = (y - centerY) / centerY;
+
+        // Calculate rotations
+        const rotateX = max * -percentY;
+        const rotateY = max * percentX;
+
+        // Apply transform
+        el.style.transition = 'transform 50ms linear';
+        el.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(${scale}, ${scale}, ${scale})`;
+
+        // Manage glare
+        if (glareEl) {
+          const glareX = percentX * 100;
+          const glareY = percentY * 100;
+          glareEl.style.transition = 'opacity 50ms linear, transform 50ms linear';
+          glareEl.style.transform = `translate(${glareX}%, ${glareY}%)`;
+          
+          const distance = Math.sqrt(percentX * percentX + percentY * percentY);
+          glareEl.style.opacity = Math.min(distance * maxGlare, maxGlare).toString();
+        }
+      });
+    };
+
     const handlePointerLeave = () => {
+      rectCache = null;
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      
       // Reset element
       el.style.transition = `transform ${speed}ms cubic-bezier(.03,.98,.52,.99)`;
       el.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
@@ -98,13 +119,6 @@ export function useTilt({
         glareEl.style.transition = `opacity ${speed}ms ease, transform ${speed}ms ease`;
         glareEl.style.opacity = '0';
         glareEl.style.transform = 'translate(-100%, -100%)';
-      }
-    };
-
-    const handlePointerEnter = () => {
-      el.style.transition = `transform ${speed}ms cubic-bezier(.03,.98,.52,.99)`;
-      if (glareEl) {
-        glareEl.style.transition = `opacity ${speed}ms ease`;
       }
     };
 

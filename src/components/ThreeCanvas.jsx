@@ -1,4 +1,4 @@
-import { useRef, useMemo } from 'react';
+import { useRef, useMemo, useState, useEffect } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Stars, Float, useScroll, ScrollControls } from '@react-three/drei';
 import * as THREE from 'three';
@@ -121,6 +121,81 @@ function DataNodes({ count = 100 }) {
   );
 }
 
+// ─── Cursor Trail (Energy trail following the mouse) ─────────────
+function CursorTrail() {
+  const pointsRef = useRef();
+  const { viewport, pointer } = useThree();
+  const count = 30; // Number of trail segments
+  
+  const [positions, colors] = useMemo(() => {
+    const pos = new Float32Array(count * 3);
+    const col = new Float32Array(count * 3);
+    return [pos, col];
+  }, []);
+
+  const history = useRef(new Array(count).fill({ x: 0, y: 0 }));
+
+  useFrame((state) => {
+    // Convert normalized pointer [-1, 1] to world coordinates
+    const targetX = (pointer.x * viewport.width) / 2;
+    const targetY = (pointer.y * viewport.height) / 2;
+    
+    // Smoothly follow the mouse
+    const head = history.current[0];
+    const nx = head.x + (targetX - head.x) * 0.15;
+    const ny = head.y + (targetY - head.y) * 0.15;
+
+    // Shift history
+    history.current.pop();
+    history.current.unshift({ x: nx, y: ny });
+
+    const colorObj = new THREE.Color('#00f0ff');
+
+    for (let i = 0; i < count; i++) {
+      const p = history.current[i];
+      positions[i * 3] = p.x;
+      positions[i * 3 + 1] = p.y;
+      positions[i * 3 + 2] = 0;
+
+      // Fade out trail
+      const alpha = 1 - i / count;
+      colors[i * 3] = colorObj.r * alpha;
+      colors[i * 3 + 1] = colorObj.g * alpha;
+      colors[i * 3 + 2] = colorObj.b * alpha;
+    }
+    
+    pointsRef.current.geometry.attributes.position.needsUpdate = true;
+    pointsRef.current.geometry.attributes.color.needsUpdate = true;
+  });
+
+  return (
+    <points ref={pointsRef}>
+      <bufferGeometry>
+        <bufferAttribute 
+          attach="attributes-position" 
+          count={count} 
+          array={positions} 
+          itemSize={3} 
+        />
+        <bufferAttribute 
+          attach="attributes-color" 
+          count={count} 
+          array={colors} 
+          itemSize={3} 
+        />
+      </bufferGeometry>
+      <pointsMaterial 
+        size={0.15} 
+        vertexColors 
+        transparent 
+        opacity={0.6} 
+        sizeAttenuation 
+        blending={THREE.AdditiveBlending}
+      />
+    </points>
+  );
+}
+
 // ─── Mouse Parallax Rig ─────────────
 function CameraRig() {
   const { camera, pointer } = useThree();
@@ -137,8 +212,15 @@ function CameraRig() {
 
 // ─── Main Component ─────────────
 export default function ThreeCanvas() {
-  // Mobile degradation check: fallback to heavily reduced quality if mobile
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== 'undefined' ? window.innerWidth < 768 : false
+  );
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   return (
     <div 
@@ -150,7 +232,9 @@ export default function ThreeCanvas() {
         height: '100vh', 
         zIndex: 0,
         pointerEvents: 'none',
-        background: '#04040a' // Base color fallback
+        background: '#04040a', // Base color fallback
+        opacity: 0,
+        animation: 'canvasFadeIn 2s ease forwards'
       }}
       aria-hidden="true"
     >
@@ -167,14 +251,15 @@ export default function ThreeCanvas() {
         {/* Floating AI structures */}
         <Float speed={1.5} rotationIntensity={0.5} floatIntensity={1}>
           <NeuralCore />
-          <DataNodes count={isMobile ? 50 : 200} />
+          <DataNodes count={isMobile ? 40 : 200} />
+          <CursorTrail />
         </Float>
         
         {/* Distant star field for depth */}
         <Stars 
           radius={12} 
           depth={20} 
-          count={isMobile ? 500 : 2500} 
+          count={isMobile ? 300 : 2500} 
           factor={4} 
           saturation={1} 
           fade 

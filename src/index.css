@@ -117,3 +117,8 @@ main, footer {
   z-index: 2;
   background: rgba(8,8,16,0.92) !important;
 }
+
+@keyframes canvasFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

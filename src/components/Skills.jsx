@@ -24,20 +24,24 @@ const CATEGORIES = [
   {
     key: 'lang', icon: 'fas fa-code', label: 'Languages', type: 'bars', color: '#00f0ff',
     items: [
-      { name: 'Python', pct: 90 }, { name: 'JavaScript', pct: 82 },
-      { name: 'TypeScript', pct: 70 }, { name: 'SQL', pct: 65 }, { name: 'C++', pct: 58 },
-    ],
+      { name: 'Python', pct: 90 },
+      { name: 'JavaScript', pct: 75 },
+      { name: 'TypeScript', pct: 70 },
+      { name: 'SQL', pct: 75 },
+      { name: 'C++', pct: 85 },
+      { name: 'C', pct: 90 },
+
+    ]
   },
   {
     key: 'ai', icon: 'fas fa-brain', label: 'AI & Data Science', type: 'bars', color: '#00ff88',
     items: [
-      { name: 'TensorFlow', pct: 80 }, { name: 'PyTorch', pct: 75 },
-      { name: 'Scikit-learn', pct: 85 }, { name: 'OpenCV', pct: 72 }, { name: 'LangChain', pct: 68 },
+      { name: 'TensorFlow', pct: 50 }, { name: 'PyTorch', pct: 75 }, { name: 'OpenCV', pct: 72 },
     ],
   },
   {
     key: 'tools', icon: 'fas fa-tools', label: 'Frameworks & Tools', type: 'tags', color: '#a855f7',
-    items: ['React.js', 'Node.js', 'Express', 'MongoDB', 'Firebase', 'Docker', 'Git/GitHub', 'VS Code', 'Streamlit', 'Pandas/NumPy', 'HuggingFace', 'FastAPI'],
+    items: ['React.js', 'Node.js', 'Express', 'MongoDB', 'Firebase', 'Docker', 'Git/GitHub', 'VS Code', 'Pandas/NumPy'],
   },
 ]
 
@@ -69,11 +73,11 @@ function SkillBar({ name, pct, color, delay = 0 }) {
 
 export default function Skills() {
   const [activeCat, setActiveCat] = useState('lang')
-  const headRef  = useRef(null)
-  const sideRef  = useRef(null)
+  const headRef = useRef(null)
+  const sideRef = useRef(null)
   const panelRef = useRef(null)
-  const headVis  = useReveal(headRef, 0.08)
-  const sideVis  = useReveal(sideRef, 0.08)
+  const headVis = useReveal(headRef, 0.08)
+  const sideVis = useReveal(sideRef, 0.08)
   const panelVis = useReveal(panelRef, 0.08)
 
 

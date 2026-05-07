@@ -68,23 +68,29 @@ export default function Contact() {
       <div className="contact-wrap">
 
         {/* Header */}
-        <div ref={headRef}>
-          <p className={`ct-eyebrow${headVis ? ' vis' : ''}`}>Get In Touch</p>
+        <div ref={headRef} className="contact-header">
+          <p className={`ct-eyebrow${headVis ? ' vis' : ''}`}>
+            <span className="eyebrow-dash" /> GET IN TOUCH
+          </p>
           <h2 className={`ct-title${headVis ? ' vis' : ''}`}>
             Let's <em>Connect.</em>
           </h2>
         </div>
 
-        {/* Body */}
+        {/* Body Grid */}
         <div className="contact-body">
 
-          {/* Left: info */}
+          {/* Left Column: Direct Line */}
           <div ref={infoRef} className={`contact-info${infoVis ? ' vis' : ''}`}>
             <div className="info-inner">
-              <p className="info-panel-label">Direct Line</p>
+              <p className="info-section-label">
+                <span className="label-dash" /> DIRECT LINE
+              </p>
+              
               <h3 className="info-heading">Say Hello</h3>
+              
               <p className="info-text">
-                I'm always interested in discussing <em>AI projects</em>, research
+                I'm always interested in discussing <strong>AI projects</strong>, research
                 opportunities, or potential collaborations. Whether you have a question
                 or just want to connect — I'll get back to you!
               </p>
@@ -92,39 +98,52 @@ export default function Contact() {
               <a
                 href="mailto:shivam17sharma2004@gmail.com"
                 className="info-email-btn"
-                aria-label="Send an email to Shivam"
               >
-                <span>shivam17sharma2004@gmail.com</span>
+                <span>SHIVAM17SHARMA2004@GMAIL.COM</span>
               </a>
 
-              <p className="info-socials-label">Find me on</p>
-              <div className="info-socials">
-                {[
-                  { href: 'https://github.com/shivamsharma0906',            icon: 'fab fa-github',    label: 'GitHub'   },
-                  { href: 'https://www.linkedin.com/in/shivam-sharma0906/', icon: 'fab fa-linkedin',  label: 'LinkedIn' },
-                  { href: 'https://www.instagram.com/shiva__m0906/',        icon: 'fab fa-instagram', label: 'Insta'    },
-                ].map(s => (
-                  <a key={s.label} href={s.href} className="social-btn" target="_blank" rel="noopener noreferrer" aria-label={`Visit my ${s.label}`}>
-                    <i className={s.icon} />
-                    <span>{s.label}</span>
-                  </a>
-                ))}
+              <div className="info-social-wrap">
+                <p className="info-section-label">FIND ME ON</p>
+                <div className="info-socials">
+                  {[
+                    { href: 'https://github.com/shivamsharma0906',            icon: 'fab fa-github',    label: 'GITHUB'   },
+                    { href: 'https://www.linkedin.com/in/shivam-sharma0906/', icon: 'fab fa-linkedin',  label: 'LINKEDIN' },
+                    { href: 'https://www.instagram.com/shiva__m0906/',        icon: 'fab fa-instagram', label: 'INSTA'    },
+                  ].map(s => (
+                    <a key={s.label} href={s.href} className="social-btn" target="_blank" rel="noopener noreferrer">
+                      <i className={s.icon} />
+                      <span>{s.label}</span>
+                    </a>
+                  ))}
+                </div>
               </div>
 
-              <div className="info-strip">
-                <div className="info-strip-row"><span>Response Time</span><strong>{'< 24 hours'}</strong></div>
-                <div className="info-strip-row"><span>Location</span><strong>Kolkata, India</strong></div>
-                <div className="info-strip-row"><span>Availability</span><strong>Open to Internships</strong></div>
+              <div className="info-details-list">
+                <div className="info-detail-item">
+                  <span className="detail-label">RESPONSE TIME</span>
+                  <span className="detail-val">{'< 24 HOURS'}</span>
+                </div>
+                <div className="info-detail-item">
+                  <span className="detail-label">LOCATION</span>
+                  <span className="detail-val">KOLKATA, INDIA</span>
+                </div>
+                <div className="info-detail-item">
+                  <span className="detail-label">AVAILABILITY</span>
+                  <span className="detail-val">OPEN TO INTERNSHIPS</span>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Right: form */}
+          {/* Right Column: Send a Message */}
           <div ref={formRef} className={`contact-form-panel${formVis ? ' vis' : ''}`}>
-            <p className="form-panel-label">Send a Message</p>
+            <p className="info-section-label">
+              <span className="label-dash" /> SEND A MESSAGE
+            </p>
+            
             <form className="ct-form" onSubmit={handleSubmit} noValidate>
               <div className="ct-field">
-                <label className="ct-label" htmlFor="ct-email">Your Email</label>
+                <label className="ct-label" htmlFor="ct-email">YOUR EMAIL</label>
                 <input
                   id="ct-email"
                   type="email"
@@ -135,8 +154,9 @@ export default function Contact() {
                   onChange={e => setEmail(e.target.value)}
                 />
               </div>
+              
               <div className="ct-field">
-                <label className="ct-label" htmlFor="ct-message">Message</label>
+                <label className="ct-label" htmlFor="ct-message">MESSAGE</label>
                 <textarea
                   id="ct-message"
                   className="ct-textarea"
@@ -146,22 +166,26 @@ export default function Contact() {
                   onChange={e => setMessage(e.target.value)}
                 />
               </div>
+
               {status && (
                 <div className={`ct-status ${status}`} role="alert">
                   {status === 'success'
-                    ? '✓ Message sent successfully! I\'ll get back to you soon.'
-                    : '✕ Something went wrong. Please try again or email directly.'}
+                    ? '✓ Message sent successfully!'
+                    : '✕ Something went wrong.'}
                 </div>
               )}
+
               <button type="submit" className="ct-submit" disabled={loading}>
-                {loading
-                  ? <><div className="ct-spinner" /><span>Sending...</span></>
-                  : <><span>Send Message</span>
-                      <svg width="11" height="11" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                        <path d="M1 11L11 1M11 1H4M11 1v7" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </>
-                }
+                {loading ? (
+                  <span>SENDING...</span>
+                ) : (
+                  <>
+                    <span>SEND MESSAGE</span>
+                    <svg width="14" height="14" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <path d="M1 11L11 1M11 1H4M11 1v7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </>
+                )}
               </button>
             </form>
           </div>

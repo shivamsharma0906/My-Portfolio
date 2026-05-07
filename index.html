@@ -15,30 +15,52 @@
     content="AI/ML student passionate about deep learning, computer vision, and ethical AI systems." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://yourwebsite.com" />
-  <meta property="og:image" content="https://yourwebsite.com/logo4.png" />
+  <meta property="og:image" content="https://yourwebsite.com/logo4.webp" />
 
   <!-- Twitter Card Meta Tags -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Shivam Sharma - AI/ML Portfolio" />
   <meta name="twitter:description" content="AI/ML student passionate about deep learning and computer vision" />
-  <meta name="twitter:image" content="https://yourwebsite.com/logo4.png" />
+  <meta name="twitter:image" content="https://yourwebsite.com/logo4.webp" />
 
   <title>Shivam Sharma - AI/ML Student Portfolio</title>
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="/logo3.png" />
+  <link rel="icon" type="image/webp" href="/logo3.webp" />
 
-  <!-- Font Awesome -->
+  <!-- Preload Avatar Image -->
+  <link rel="preload" as="image" href="/logo4.webp" />
+
+  <!-- Font Awesome: loaded async + font-display:swap override -->
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
-    crossorigin="anonymous" referrerpolicy="no-referrer" />
+    crossorigin="anonymous" referrerpolicy="no-referrer" media="print" onload="this.media='all'" />
+  <noscript>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  </noscript>
+  <!-- Override Font Awesome font-display to swap to prevent render blocking -->
+  <style>
+    @font-face {
+      font-family: "Font Awesome 6 Free";
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "Font Awesome 6 Brands";
+      font-display: swap;
+    }
+  </style>
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" />
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
-    rel="stylesheet" />
+    rel="stylesheet" media="print" onload="this.media='all'" />
+  <noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  </noscript>
 </head>
 
 <body>

@@ -68,7 +68,7 @@ export default function About() {
                     Hello, I'm <strong>Shivam Sharma</strong> — an AI & ML developer building <strong>intelligent, real-world systems</strong>. I turn ideas into <strong>functional products</strong> using machine learning, clean engineering, and thoughtful design.
                   </>,
                   <>
-                    I create <strong>AI-powered web applications</strong>, automation tools, and <strong>data-driven systems</strong> with experience in <strong>deep learning, NLP, and computer vision</strong>.
+                    I create <strong>AI-powered web applications</strong>, automation tools, and <strong>data-driven systems</strong> with experience in <strong>deep learning and computer vision</strong>.
                   </>,
                   <>
                     I actively build projects, explore emerging technologies, and contribute to <strong>open-source</strong>, constantly improving through <strong>real-world development</strong>.
@@ -104,9 +104,11 @@ export default function About() {
           <div ref={rightRef} className={`about-right${rightVis ? ' vis' : ''}`}>
             <div className="about-img-panel">
               <img
-                src="/cafe.jpg"
+                src="/cafe.webp"
                 alt="Shivam Sharma"
                 loading="lazy"
+                width="480"
+                height="640"
                 onLoad={(e) => e.target.classList.add('loaded')}
               />
               <div className="img-info-bar">

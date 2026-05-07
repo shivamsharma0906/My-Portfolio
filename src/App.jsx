@@ -1,41 +1,58 @@
+import React, { Suspense, lazy, useState, useEffect } from 'react'
 import AuroraBackground from './components/AuroraBackground'
-import ThreeCanvas from './components/ThreeCanvas'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
-import About from './components/About'
-import Experience from './components/Experience'
-import AiMlExpertise from './components/AiMlExpertise'
-import Projects from './components/Projects'
-import Skills from './components/Skills'
-import WhatIDo from './components/WhatIDo'
-import Contact from './components/Contact'
-import Chatbot from './components/Chatbot'
-import Footer from './components/Footer'
-import { useFadeIn } from './hooks/useFadeIn'
+
+// Lazy load heavy and below-the-fold components
+const ThreeCanvas = lazy(() => import('./components/ThreeCanvas'))
+const About = lazy(() => import('./components/About'))
+const Experience = lazy(() => import('./components/Experience'))
+const AiMlExpertise = lazy(() => import('./components/AiMlExpertise'))
+const Projects = lazy(() => import('./components/Projects'))
+const Skills = lazy(() => import('./components/Skills'))
+const WhatIDo = lazy(() => import('./components/WhatIDo'))
+const Contact = lazy(() => import('./components/Contact'))
+const Chatbot = lazy(() => import('./components/Chatbot'))
+const Footer = lazy(() => import('./components/Footer'))
 
 function App() {
-  useFadeIn()
+  const [loadWebGL, setLoadWebGL] = useState(false)
+
+  useEffect(() => {
+    // Delay heavy WebGL initialization to ensure LCP/FCP finishes first
+    const timer = setTimeout(() => {
+      setLoadWebGL(true)
+    }, 50)
+    return () => clearTimeout(timer)
+  }, [])
 
   return (
     <>
-      <ThreeCanvas />
+      {loadWebGL && (
+        <Suspense fallback={null}>
+          <ThreeCanvas />
+        </Suspense>
+      )}
       <AuroraBackground />
       <Navbar />
       <main>
         <Hero />
-        <About />
-        <Experience />
-        <AiMlExpertise />
-        <Projects />
-        <Skills />
-        <WhatIDo />
-        <Contact />
+        <Suspense fallback={<div style={{ minHeight: '100vh' }} />}>
+          <About />
+          <Experience />
+          <AiMlExpertise />
+          <Projects />
+          <Skills />
+          <WhatIDo />
+          <Contact />
+        </Suspense>
       </main>
-      <Footer />
-      <Chatbot />
+      <Suspense fallback={null}>
+        <Footer />
+        <Chatbot />
+      </Suspense>
     </>
   )
 }
 
 export default App
-

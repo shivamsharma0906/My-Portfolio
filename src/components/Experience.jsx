@@ -38,8 +38,8 @@ const ITEMS = [
     role: 'AI/ML Self-Directed Learner',
     org: 'Independent',
     icon: 'fas fa-laptop-code',
-    desc: 'Actively developing skills in Computer Vision and NLP through hands-on projects like weather forecasting apps, attendance tracking systems, and LangChain chatbots. Contributing to open-source AI communities.',
-    tags: ['Computer Vision', 'NLP', 'LangChain', 'OpenCV'],
+    desc: 'Actively developing skills in Computer Vision through hands-on projects like weather forecasting apps, attendance tracking systems, and LangChain chatbots. Contributing to open-source AI communities.',
+    tags: ['Computer Vision', 'LangChain', 'OpenCV'],
   },
 ]
 

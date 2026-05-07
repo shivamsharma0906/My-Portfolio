@@ -73,7 +73,7 @@ export default function Navbar() {
             aria-label="Back to top"
             onClick={(e) => { e.preventDefault(); scrollTo('#hero') }}
           >
-            <img src="/logo3.png" alt="Shivam Sharma" className="nav-logo-img" width="30" height="30" loading="eager" />
+            <img src="/logo3.webp" alt="Shivam Sharma" className="nav-logo-img" width="30" height="30" loading="eager" />
             <span className="nav-logo-text">My <span>Portfolio</span></span>
           </a>
 
