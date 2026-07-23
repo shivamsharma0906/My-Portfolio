@@ -474,32 +474,28 @@
 .hero-terminal {
   cursor: pointer;
   user-select: none;
-  transition: border-color 0.3s;
-}
-.hero-terminal.terminal-active {
-  cursor: default;
-  border-color: rgba(0,240,255,0.35);
-  user-select: text;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
 }
 
-/* Terminal body scroll container - BIGGER */
+/* Terminal body scroll container */
 .hero-terminal .terminal-body {
-  max-height: 280px; /* Increased from 180px */
+  max-height: 280px;
   min-height: 180px;
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: rgba(0,240,255,0.2) transparent;
   padding: 16px 20px;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 12px; /* Slightly larger text */
+  font-size: 12px;
   line-height: 1.8;
 }
 .hero-terminal.terminal-active {
-  cursor: default;
+  cursor: text;
   border-color: rgba(0,240,255,0.5);
-  box-shadow: 0 10px 40px -10px rgba(0, 240, 255, 0.2);
-  transform: translateY(-5px) scale(1.02);
-  z-index: 10;
+  box-shadow: 0 10px 40px -10px rgba(0, 240, 255, 0.25);
+  transform: translateY(-4px);
+  user-select: text;
+  z-index: 5;
 }
 .hero-terminal .terminal-body::-webkit-scrollbar { width: 4px; }
 .hero-terminal .terminal-body::-webkit-scrollbar-track { background: transparent; }

@@ -132,16 +132,6 @@
     flex-shrink: 0;
     margin-left: 16px;
   }
-  .nav-resume::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: var(--cyan-dim);
-    transform: scaleX(0); transform-origin: left;
-    transition: transform 0.3s cubic-bezier(.22,1,.36,1);
-  }
-  .nav-resume:hover::before { transform: scaleX(1); }
-  .nav-resume:hover { color: var(--cyan); border-color: var(--border-h); }
-  .nav-resume span { position: relative; z-index: 1; }
 
   /* ── Active indicator dot ── */
   .nav-section-indicator {

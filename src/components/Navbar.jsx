@@ -9,6 +9,7 @@ import './Navbar.css';
 const NAV_ITEMS = [
   { label: 'About', href: '#about' },
   { label: 'AI/ML', href: '#ai-ml-expertise' },
+  { label: 'GitHub', href: '#github-activity' },
   { label: 'Projects', href: '#projects' },
   { label: 'Skills', href: '#skills' },
   { label: 'Contact', href: '#contact' },
@@ -16,13 +17,10 @@ const NAV_ITEMS = [
 
 /* ─── Component ───────────────────────────────────────────────────────── */
 export default function Navbar() {
-  const [injected, setInjected] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [progress, setProgress] = useState(0)
   const [active, setActive] = useState('')
   const [menuOpen, setMenuOpen] = useState(false)
-
-
 
   /* Reading progress + scroll state */
   useEffect(() => {

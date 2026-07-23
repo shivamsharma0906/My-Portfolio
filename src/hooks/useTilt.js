@@ -13,6 +13,7 @@ export function useTilt({
   speed = 400,       // transition speed
   glare = true,      // enable inner glare effect
   maxGlare = 0.3,    // max opacity of glare
+  disabled = false,  // disable tilt effect (e.g. when active/typing)
 } = {}, externalRef = null) {
   const internalRef = useRef(null);
   const ref = externalRef || internalRef;
@@ -21,8 +22,11 @@ export function useTilt({
     const el = ref.current;
     if (!el) return;
 
-    // We only enable this effect if it's not a touch device to gracefully degrade
-    if (window.matchMedia("(pointer: coarse)").matches) return;
+    if (disabled || window.matchMedia("(pointer: coarse)").matches) {
+      el.style.transform = '';
+      el.style.transition = '';
+      return;
+    }
 
     // Create glare element
     let glareEl;
@@ -37,11 +41,10 @@ export function useTilt({
       glareEl.style.backgroundImage = 'linear-gradient(105deg, transparent 20%, rgba(255,255,255,1) 50%, transparent 80%)';
       glareEl.style.transform = 'translate(-100%, -100%)';
       glareEl.style.opacity = '0';
-      glareEl.style.transition = `opacity ${speed}ms ease, transform 0ms linear`;
-      glareEl.style.zIndex = '10';
+      glareEl.style.transition = `opacity ${speed}ms ease, transform ${speed}ms ease`;
+      glareEl.style.zIndex = '1';
       glareEl.style.mixBlendMode = 'overlay';
 
-      // Ensure parent has relative/absolute positioning and clipping for the glare
       if (getComputedStyle(el).position === 'static') {
         el.style.position = 'relative';
       }
@@ -49,10 +52,8 @@ export function useTilt({
       el.appendChild(glareEl);
     }
 
-    // Set initial transform properties for performance
     el.style.transformPerspective = '1000px';
     el.style.transformStyle = 'preserve-3d';
-    el.style.transition = `transform ${speed}ms cubic-bezier(.03,.98,.52,.99)`;
 
     let animationFrameId = null;
     let rectCache = null;
@@ -75,31 +76,27 @@ export function useTilt({
       }
 
       animationFrameId = requestAnimationFrame(() => {
-        // Calculate mouse position relative to element center
         const x = e.clientX - rectCache.left; 
         const y = e.clientY - rectCache.top; 
 
         const centerX = rectCache.width / 2;
         const centerY = rectCache.height / 2;
 
-        // Calculate percentage off center (-1 to 1)
         const percentX = (x - centerX) / centerX;
         const percentY = (y - centerY) / centerY;
 
-        // Calculate rotations
         const rotateX = max * -percentY;
         const rotateY = max * percentX;
 
-        // Apply transform
-        el.style.transition = 'transform 50ms linear';
-        el.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(${scale}, ${scale}, ${scale})`;
+        // Set transition to none during tracking for 60-120fps smooth performance
+        el.style.transition = 'none';
+        el.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale3d(${scale}, ${scale}, ${scale})`;
 
-        // Manage glare
         if (glareEl) {
           const glareX = percentX * 100;
           const glareY = percentY * 100;
-          glareEl.style.transition = 'opacity 50ms linear, transform 50ms linear';
-          glareEl.style.transform = `translate(${glareX}%, ${glareY}%)`;
+          glareEl.style.transition = 'none';
+          glareEl.style.transform = `translate(${glareX.toFixed(2)}%, ${glareY.toFixed(2)}%)`;
           
           const distance = Math.sqrt(percentX * percentX + percentY * percentY);
           glareEl.style.opacity = Math.min(distance * maxGlare, maxGlare).toString();
@@ -111,7 +108,6 @@ export function useTilt({
       rectCache = null;
       if (animationFrameId) cancelAnimationFrame(animationFrameId);
       
-      // Reset element
       el.style.transition = `transform ${speed}ms cubic-bezier(.03,.98,.52,.99)`;
       el.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
 
@@ -134,7 +130,7 @@ export function useTilt({
         el.removeChild(glareEl);
       }
     };
-  }, [max, scale, speed, glare, maxGlare]);
+  }, [max, scale, speed, glare, maxGlare, disabled]);
 
   return ref;
 }

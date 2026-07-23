@@ -1,9 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
-
+import { useTilt } from '../hooks/useTilt'
 import './Contact.css';
-
-/* ─── Styles ──────────────────────────────────────────────────────────── */
-
 
 /* ─── Reveal hook ─────────────────────────────────────────────────────── */
 function useReveal(ref, threshold = 0.1) {
@@ -23,10 +20,12 @@ function useReveal(ref, threshold = 0.1) {
 
 /* ─── Component ───────────────────────────────────────────────────────── */
 export default function Contact() {
+  const [name,     setName]     = useState('')
   const [email,    setEmail]    = useState('')
   const [message,  setMessage]  = useState('')
   const [loading,  setLoading]  = useState(false)
   const [status,   setStatus]   = useState(null)
+  const [copied,   setCopied]   = useState(false)
 
   const headRef  = useRef(null)
   const infoRef  = useRef(null)
@@ -35,13 +34,21 @@ export default function Contact() {
   const infoVis  = useReveal(infoRef, 0.08)
   const formVis  = useReveal(formRef, 0.08)
 
+  useTilt({ max: 8, scale: 1.01, glare: true, maxGlare: 0.15 }, infoRef)
+  useTilt({ max: 8, scale: 1.01, glare: true, maxGlare: 0.15 }, formRef)
 
+  const handleCopyEmail = () => {
+    navigator.clipboard.writeText('shivam17sharma2004@gmail.com')
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2500)
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
     setStatus(null)
     const fd = new FormData()
+    fd.append('name', name)
     fd.append('email', email)
     fd.append('message', message)
     try {
@@ -51,7 +58,7 @@ export default function Contact() {
         body: fd,
       })
       if (res.ok) {
-        setEmail(''); setMessage('')
+        setName(''); setEmail(''); setMessage('')
         setStatus('success')
         setTimeout(() => setStatus(null), 4000)
       } else throw new Error()
@@ -80,114 +87,192 @@ export default function Contact() {
         {/* Body Grid */}
         <div className="contact-body">
 
-          {/* Left Column: Direct Line */}
-          <div ref={infoRef} className={`contact-info${infoVis ? ' vis' : ''}`}>
-            <div className="info-inner">
-              <p className="info-section-label">
-                <span className="label-dash" /> DIRECT LINE
-              </p>
-              
-              <h3 className="info-heading">Say Hello</h3>
-              
-              <p className="info-text">
-                I'm always interested in discussing <strong>AI projects</strong>, research
-                opportunities, or potential collaborations. Whether you have a question
-                or just want to connect — I'll get back to you!
-              </p>
+          {/* Left Column: Direct Line Card */}
+          <div ref={infoRef} className={`contact-info-card${infoVis ? ' vis' : ''}`}>
+            <div className="info-corner-accent" aria-hidden="true" />
+            
+            <div className="info-header-row">
+              <span className="info-badge">
+                <span className="badge-pulse" />
+                DIRECT LINE
+              </span>
+              <span className="info-tag-sys">SHIVAM_OS // COMM_LINK</span>
+            </div>
+            
+            <h3 className="info-heading">Say Hello.</h3>
+            
+            <p className="info-text">
+              I'm always open to discussing <em>AI/ML projects</em>, research
+              opportunities, or high-impact collaborations. Have an idea or question?
+              Let's create something extraordinary together.
+            </p>
 
-              <a
-                href="mailto:shivam17sharma2004@gmail.com"
-                className="info-email-btn"
-              >
-                <span>SHIVAM17SHARMA2004@GMAIL.COM</span>
-              </a>
-
-              <div className="info-social-wrap">
-                <p className="info-section-label">FIND ME ON</p>
-                <div className="info-socials">
-                  {[
-                    { href: 'https://github.com/shivamsharma0906',            icon: 'fab fa-github',    label: 'GITHUB'   },
-                    { href: 'https://www.linkedin.com/in/shivam-sharma0906/', icon: 'fab fa-linkedin',  label: 'LINKEDIN' },
-                    { href: 'https://www.instagram.com/shiva__m0906/',        icon: 'fab fa-instagram', label: 'INSTA'    },
-                  ].map(s => (
-                    <a key={s.label} href={s.href} className="social-btn" target="_blank" rel="noopener noreferrer">
-                      <i className={s.icon} />
-                      <span>{s.label}</span>
-                    </a>
-                  ))}
-                </div>
+            {/* Email Action Card */}
+            <div className="email-action-card">
+              <div className="email-meta">
+                <span className="email-label">PRIMARY EMAIL ADDRESS</span>
+                <a
+                  href="mailto:shivam17sharma2004@gmail.com"
+                  className="email-address"
+                  aria-label="Send email to Shivam"
+                >
+                  shivam17sharma2004@gmail.com
+                </a>
               </div>
+              <button
+                className={`email-copy-btn${copied ? ' copied' : ''}`}
+                onClick={handleCopyEmail}
+                type="button"
+                aria-label="Copy email address"
+              >
+                {copied ? (
+                  <>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    <span>COPIED</span>
+                  </>
+                ) : (
+                  <>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    <span>COPY</span>
+                  </>
+                )}
+              </button>
+            </div>
 
-              <div className="info-details-list">
-                <div className="info-detail-item">
-                  <span className="detail-label">RESPONSE TIME</span>
-                  <span className="detail-val">{'< 24 HOURS'}</span>
-                </div>
-                <div className="info-detail-item">
-                  <span className="detail-label">LOCATION</span>
-                  <span className="detail-val">KOLKATA, INDIA</span>
-                </div>
-                <div className="info-detail-item">
-                  <span className="detail-label">AVAILABILITY</span>
-                  <span className="detail-val">OPEN TO INTERNSHIPS</span>
-                </div>
+            {/* Socials */}
+            <div className="info-social-wrap">
+              <p className="info-section-label">COMMUNICATION CHANNELS</p>
+              <div className="info-socials">
+                {[
+                  { href: 'https://github.com/shivamsharma0906',            icon: 'fab fa-github',    label: 'GITHUB'   },
+                  { href: 'https://www.linkedin.com/in/shivam-sharma0906/', icon: 'fab fa-linkedin',  label: 'LINKEDIN' },
+                  { href: 'https://www.instagram.com/shiva__m0906/',        icon: 'fab fa-instagram', label: 'INSTAGRAM'}
+                ].map(s => (
+                  <a key={s.label} href={s.href} className="social-btn" target="_blank" rel="noopener noreferrer">
+                    <i className={s.icon} />
+                    <span>{s.label}</span>
+                    <svg className="social-arrow" width="10" height="10" viewBox="0 0 12 12" fill="none">
+                      <path d="M1 11L11 1M11 1H4M11 1v7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </a>
+                ))}
               </div>
             </div>
+
+            {/* Meta Grid */}
+            <div className="info-meta-grid">
+              <div className="meta-card">
+                <span className="meta-label">RESPONSE TIME</span>
+                <span className="meta-val">&lt; 24 HOURS</span>
+              </div>
+              <div className="meta-card">
+                <span className="meta-label">LOCATION</span>
+                <span className="meta-val">KOLKATA, INDIA</span>
+              </div>
+              <div className="meta-card meta-card-full">
+                <span className="meta-label">AVAILABILITY</span>
+                <span className="meta-val meta-val-green">
+                  <span className="meta-dot-green" />
+                  OPEN TO INTERNSHIPS &amp; COLLABS
+                </span>
+              </div>
+            </div>
+
           </div>
 
           {/* Right Column: Send a Message */}
           <div ref={formRef} className={`contact-form-panel${formVis ? ' vis' : ''}`}>
-            <p className="info-section-label">
-              <span className="label-dash" /> SEND A MESSAGE
-            </p>
+            <div className="info-corner-accent" aria-hidden="true" />
+
+            <div className="info-header-row">
+              <span className="info-badge">
+                <span className="badge-pulse" />
+                TRANSMIT MESSAGE
+              </span>
+              <span className="info-tag-sys">FORM_DISPATCH // SECURE</span>
+            </div>
             
             <form className="ct-form" onSubmit={handleSubmit} noValidate>
               <div className="ct-field">
-                <label className="ct-label" htmlFor="ct-email">YOUR EMAIL</label>
-                <input
-                  id="ct-email"
-                  type="email"
-                  className="ct-input"
-                  placeholder="you@example.com"
-                  required
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                />
+                <label className="ct-label" htmlFor="ct-name">
+                  <span>YOUR NAME</span>
+                </label>
+                <div className="ct-input-wrap">
+                  <i className="far fa-user ct-field-icon" aria-hidden="true" />
+                  <input
+                    id="ct-name"
+                    type="text"
+                    className="ct-input"
+                    placeholder="Shivam Sharma"
+                    required
+                    value={name}
+                    onChange={e => setName(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="ct-field">
+                <label className="ct-label" htmlFor="ct-email">
+                  <span>YOUR EMAIL</span>
+                </label>
+                <div className="ct-input-wrap">
+                  <i className="far fa-envelope ct-field-icon" aria-hidden="true" />
+                  <input
+                    id="ct-email"
+                    type="email"
+                    className="ct-input"
+                    placeholder="shivam@example.com"
+                    required
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                  />
+                </div>
               </div>
               
               <div className="ct-field">
-                <label className="ct-label" htmlFor="ct-message">MESSAGE</label>
-                <textarea
-                  id="ct-message"
-                  className="ct-textarea"
-                  placeholder="Tell me about your project or opportunity..."
-                  required
-                  value={message}
-                  onChange={e => setMessage(e.target.value)}
-                />
+                <label className="ct-label" htmlFor="ct-message">
+                  <span>MESSAGE</span>
+                </label>
+                <div className="ct-input-wrap">
+                  <i className="far fa-comment-alt ct-field-icon ct-icon-top" aria-hidden="true" />
+                  <textarea
+                    id="ct-message"
+                    className="ct-textarea"
+                    placeholder="Tell me about your project, idea, or opportunity..."
+                    required
+                    value={message}
+                    onChange={e => setMessage(e.target.value)}
+                  />
+                </div>
               </div>
 
               {status && (
                 <div className={`ct-status ${status}`} role="alert">
                   {status === 'success'
-                    ? '✓ Message sent successfully!'
-                    : '✕ Something went wrong.'}
+                    ? '✓ Message transmitted successfully!'
+                    : '✕ Transmission failed. Please try again.'}
                 </div>
               )}
 
               <button type="submit" className="ct-submit" disabled={loading}>
-                {loading ? (
-                  <span>SENDING...</span>
-                ) : (
-                  <>
-                    <span>SEND MESSAGE</span>
-                    <svg width="14" height="14" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                      <path d="M1 11L11 1M11 1H4M11 1v7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </>
-                )}
+                <span className="ct-submit-text">
+                  {loading ? 'TRANSMITTING...' : 'SEND MESSAGE'}
+                </span>
+                <svg className="ct-submit-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                  <path d="M1 11L11 1M11 1H4M11 1v7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
               </button>
             </form>
+
+            <div className="form-security-note">
+              <span className="sec-dot" />
+              <span>ENCRYPTED DIRECT DISPATCH // FAST RESPONSE GUARANTEED</span>
+            </div>
           </div>
 
         </div>

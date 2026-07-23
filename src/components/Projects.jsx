@@ -24,26 +24,16 @@ function useReveal(ref, threshold = 0.1) {
 const PROJECTS = [
   {
     num: 'PRJ_01',
-    title: 'VisionOS',
-    desc: 'A personal Life Operating System for aligning daily actions with long-term goals, featuring Deep Work focus, financial tracking, year-progress visualization, and future projections.',
-    tags: ['React', 'Node.js', 'MongoDB', 'Render'],
-    github: 'https://github.com/shivamsharma0906/VisionOS',
-    demo: 'https://shivamsharma0906.github.io/VisionOS/',
-    accent: '#ae00ffff',
+    title: 'E-Commerce Website',
+    desc: 'A modern and responsive e-commerce platform featuring product browsing, category filtering, shopping cart functionality, and a seamless user experience with a clean, intuitive interface.',
+    tags: ['React', 'JavaScript', 'CSS', 'Vercel'],
+    github: 'https://github.com/shivamsharma0906/e-commerce-website',
+    demo: 'https://e-commerce-website-taupe-mu.vercel.app/',
+    accent: '#00d4ff',
     category: 'Web App',
     featured: true,
   },
-  {
-    num: 'PRJ_05',
-    title: 'AttendX',
-    desc: 'Smart employee attendance management system with secure authentication, real-time attendance tracking, analytics dashboard, role-based access, and a modern responsive interface for efficient workforce management.',
-    tags: ['React', 'Node.js', 'MongoDB', 'Firebase'],
-    github: 'https://github.com/shivamsharma0906/AttendX',
-    demo: 'https://attend-x-jade.vercel.app/',
-    accent: '#00c2ff',
-    category: 'Web Application',
-    featured: true,
-  },
+
   {
     num: 'PRJ_03',
     title: 'Juntoz',
@@ -54,8 +44,20 @@ const PROJECTS = [
     accent: '#8b5cf6',
     category: 'Portfolio Website',
     featured: true,
-
   },
+
+  {
+    num: 'PRJ_03',
+    title: 'AttendX',
+    desc: 'Smart employee attendance management system with secure authentication, real-time attendance tracking, analytics dashboard, role-based access, and a modern responsive interface for efficient workforce management.',
+    tags: ['React', 'Node.js', 'MongoDB', 'Firebase'],
+    github: 'https://github.com/shivamsharma0906/AttendX',
+    demo: 'https://attend-x-jade.vercel.app/',
+    accent: '#00c2ff',
+    category: 'Web Application',
+    featured: true,
+  },
+
   {
     num: 'PRJ_04',
     title: 'Lift & Fit',
@@ -67,21 +69,12 @@ const PROJECTS = [
     category: 'Web App',
     featured: true,
   },
-]
-
-const FILTERS = ['All', 'Web App', 'AI/ML']
+];
 
 /* ─── Component ───────────────────────────────────────────────────────── */
 export default function Projects() {
-  const [activeFilter, setActiveFilter] = useState('All')
   const headRef = useRef(null)
   const headVis = useReveal(headRef, 0.08)
-
-
-
-  const filtered = activeFilter === 'All'
-    ? PROJECTS
-    : PROJECTS.filter(p => p.category === activeFilter)
 
   return (
     <section id="projects">
@@ -93,23 +86,11 @@ export default function Projects() {
           <h2 className={`proj-title${headVis ? ' vis' : ''}`}>
             Featured <em>Projects.</em>
           </h2>
-          <div className={`proj-filters${headVis ? ' vis' : ''}`}>
-            {FILTERS.map(f => (
-              <button
-                key={f}
-                className={`proj-filter${activeFilter === f ? ' active' : ''}`}
-                onClick={() => setActiveFilter(f)}
-                aria-pressed={activeFilter === f}
-              >
-                {f}
-              </button>
-            ))}
-          </div>
         </div>
 
         {/* Grid */}
         <div className="proj-grid">
-          {filtered.map((p, i) => (
+          {PROJECTS.map((p, i) => (
             <ProjectCard key={p.num} project={p} index={i} />
           ))}
         </div>

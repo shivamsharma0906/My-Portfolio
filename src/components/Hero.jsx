@@ -153,8 +153,7 @@ const COMMANDS = {
 }
 
 /* ─── Interactive Terminal ────────────────────────────────────────────── */
-function InteractiveTerminal({ tiltRef }) {
-  const [active, setActive]   = useState(false)
+function InteractiveTerminal({ tiltRef, active, setActive }) {
   const [lines, setLines]     = useState([])         // { type: 'in'|'out', text: string }[]
   const [input, setInput]     = useState('')
   const [cmdHist, setCmdHist] = useState([])
@@ -163,10 +162,15 @@ function InteractiveTerminal({ tiltRef }) {
   const bodyRef   = useRef(null)
   const inputRef  = useRef(null)
 
-  // Scroll to bottom on every new line
+  // Scroll to bottom on every new line or active toggle
   useEffect(() => {
-    if (bodyRef.current)
-      bodyRef.current.scrollTop = bodyRef.current.scrollHeight
+    if (bodyRef.current) {
+      const timer = requestAnimationFrame(() => {
+        if (bodyRef.current)
+          bodyRef.current.scrollTop = bodyRef.current.scrollHeight
+      })
+      return () => cancelAnimationFrame(timer)
+    }
   }, [lines, active])
 
   const activate = () => {
@@ -184,7 +188,9 @@ function InteractiveTerminal({ tiltRef }) {
       setTimeout(() => {
         setLines(l => [...l, { type: 'out', text: '  Type "help" to explore or "exit" to close →' }])
         inputRef.current?.focus()
-      }, 600)
+      }, 400)
+    } else {
+      inputRef.current?.focus()
     }
   }
 
@@ -198,7 +204,7 @@ function InteractiveTerminal({ tiltRef }) {
 
     const handler = COMMANDS[cmd]
     if (!handler) {
-      setLines(l => [...l, { type: 'out', text: `  command not found: ${cmd}` }])
+      setLines(l => [...l, { type: 'out', text: `  command not found: ${cmd}. Type "help" for commands.` }])
       return
     }
 
@@ -220,8 +226,8 @@ function InteractiveTerminal({ tiltRef }) {
             setLines([])
             setInput('')
             setIsTyping(false)
-          }, 800)
-        }, 600)
+          }, 500)
+        }, 400)
       }, 200)
       return
     }
@@ -239,23 +245,31 @@ function InteractiveTerminal({ tiltRef }) {
           if (cmd === 'resume') window.open('/shivam_resume.pdf', '_blank')
           if (cmd === 'github') window.open('https://github.com/shivamsharma0906', '_blank')
         }
-      }, 300)
+      }, 200)
       return
     }
 
     // Normal command output
     setLines(l => [...l, ...result.map(t => ({ type: 'out', text: t }))])
-  }, [isTyping])
+  }, [isTyping, setActive])
 
   const onKeyDown = (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'l') {
+      e.preventDefault()
+      setLines([])
+      return
+    }
+
     if (e.key === 'Enter') {
       run(input)
       setInput('')
     } else if (e.key === 'ArrowUp') {
       e.preventDefault()
-      const next = Math.min(histIdx + 1, cmdHist.length - 1)
-      setHistIdx(next)
-      setInput(cmdHist[next] ?? '')
+      if (cmdHist.length > 0) {
+        const next = Math.min(histIdx + 1, cmdHist.length - 1)
+        setHistIdx(next)
+        setInput(cmdHist[next] ?? '')
+      }
     } else if (e.key === 'ArrowDown') {
       e.preventDefault()
       const next = Math.max(histIdx - 1, -1)
@@ -305,7 +319,7 @@ function InteractiveTerminal({ tiltRef }) {
           </>
         ) : (
           /* ── Interactive view ── */
-          <div className="term-interactive" onClick={e => e.stopPropagation()}>
+          <div className="term-interactive">
             {lines.map((l, i) => (
               <div key={i} className={`term-line term-${l.type}`}>
                 {l.type === 'in' && <span className="term-prompt">› </span>}
@@ -339,9 +353,10 @@ export default function Hero() {
   const sectionRef = useRef(null)
   const vis = true
   const typingRef = useTyping(WORDS)
+  const [terminalActive, setTerminalActive] = useState(false)
 
   const avatarRef = useTilt({ max: 20, scale: 1.05, glare: true, maxGlare: 0.4 })
-  const terminalRef = useTilt({ max: 12, scale: 1.02, glare: true, maxGlare: 0.2 })
+  const terminalRef = useTilt({ max: 12, scale: 1.02, glare: true, maxGlare: 0.2, disabled: terminalActive })
 
   const scrollTo = (id) => (e) => {
     e.preventDefault()
@@ -457,7 +472,7 @@ export default function Hero() {
             </div>
 
             {/* Interactive terminal card */}
-            <InteractiveTerminal tiltRef={terminalRef} />
+            <InteractiveTerminal tiltRef={terminalRef} active={terminalActive} setActive={setTerminalActive} />
           </div>
         </div>
       </div>

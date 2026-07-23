@@ -96,13 +96,10 @@ main, footer {
 }
 
 /* Semi-transparent sections so aurora bleeds through */
-#hero, #about, #experience, #ai-ml-expertise,
-#projects, #skills, #what-i-do, #contact {
+#hero, #about, #experience, #ai-ml-expertise, #github-activity,
+#projects, #skills, #contact {
   background: rgba(4,4,10,0.75) !important;
 }
-
-/* Hero slightly more open */
-#hero { background: rgba(4,4,10,0.58) !important; }
 
 /* Cards stay opaque for readability */
 .proj-card, .wid-card, .aiml-card, .exp-card,
