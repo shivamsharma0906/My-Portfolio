@@ -34,24 +34,6 @@ const LANG_COLORS = {
 }
 const getLangColor = (lang) => LANG_COLORS[lang] || '#6b6b80'
 
-/* Contribution grid helper – creates a 52-week synthetic grid */
-function buildContribGrid() {
-  const cells = []
-  for (let w = 0; w < 52; w++) {
-    for (let d = 0; d < 7; d++) {
-      const level = Math.random() < 0.35 ? 0
-                  : Math.random() < 0.5  ? 1
-                  : Math.random() < 0.7  ? 2
-                  : Math.random() < 0.85 ? 3 : 4
-      cells.push(level)
-    }
-  }
-  return cells
-}
-
-const CONTRIB_GRID = buildContribGrid()
-const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
-
 export default function GitHubActivity() {
   const headRef  = useRef(null)
   const mainRef  = useRef(null)
@@ -101,7 +83,7 @@ export default function GitHubActivity() {
             Open-Source <em>Footprint.</em>
           </h2>
           <p className={`gh-subtitle${headVis ? ' vis' : ''}`}>
-            Real-time pull from GitHub API — repos, contributions, and commit streaks, live.
+            Real-time pull from GitHub API — repos and stats, live.
           </p>
         </div>
 
@@ -129,21 +111,6 @@ export default function GitHubActivity() {
               {/* Profile card */}
               <ProfileCard profile={profile} />
 
-              {/* Contribution heatmap */}
-              <div className="gh-heatmap-wrap">
-                <div className="gh-block-title">
-                  <i className="fas fa-fire" /> Contribution Activity
-                  <span className="gh-live-pill">● LIVE</span>
-                </div>
-                <ContribHeatmap grid={CONTRIB_GRID} />
-                <div className="gh-heatmap-foot">
-                  <span>Less</span>
-                  <div className="gh-legend">
-                    {[0,1,2,3,4].map(l => <div key={l} className={`gh-cell level-${l}`} />)}
-                  </div>
-                  <span>More</span>
-                </div>
-              </div>
 
               {/* Repos */}
               <div className="gh-repos-section">
@@ -236,21 +203,6 @@ function ProfileCard({ profile }) {
   )
 }
 
-/* ── Contribution Heatmap ─────────────────────────────────── */
-function ContribHeatmap({ grid }) {
-  return (
-    <div className="gh-heatmap">
-      <div className="gh-month-labels">
-        {MONTHS.map(m => <span key={m}>{m}</span>)}
-      </div>
-      <div className="gh-grid">
-        {grid.map((level, i) => (
-          <div key={i} className={`gh-cell level-${level}`} title={`${level * 2} contributions`} />
-        ))}
-      </div>
-    </div>
-  )
-}
 
 /* ── Repo Card ────────────────────────────────────────────── */
 function RepoCard({ repo, active, onSelect }) {

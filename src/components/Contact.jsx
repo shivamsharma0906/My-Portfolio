@@ -45,6 +45,12 @@ export default function Contact() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!name.trim() || !message.trim() || !email.trim() || !emailRegex.test(email.trim())) {
+      setStatus('error')
+      setTimeout(() => setStatus(null), 4000)
+      return
+    }
     setLoading(true)
     setStatus(null)
     const fd = new FormData()

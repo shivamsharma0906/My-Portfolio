@@ -226,6 +226,37 @@
   }
   .exp-card:hover .exp-desc { color: #8a8aa0; }
 
+  /* highlights list */
+  .exp-highlights {
+    list-style: none;
+    padding: 0;
+    margin: 16px 0 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .exp-highlight-item {
+    position: relative;
+    padding-left: 20px;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.75;
+    color: var(--muted);
+    transition: color 0.3s;
+  }
+  .exp-highlight-item::before {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 10px;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--cyan);
+    box-shadow: 0 0 5px var(--cyan);
+  }
+  .exp-card:hover .exp-highlight-item { color: #8a8aa0; }
+
   /* tags */
   .exp-tags {
     display: flex;

@@ -24,6 +24,20 @@ function useReveal(ref, threshold = 0.1) {
 /* ─── Data ────────────────────────────────────────────────────────────── */
 const ITEMS = [
   {
+    id: 'EXP_00',
+    date: 'April 2025 – Present',
+    role: 'Web Developer & Business Development Associate',
+    org: 'Juntoz',
+    icon: 'fas fa-briefcase',
+    desc: 'Building responsive, high-performance web applications with modern frontend technologies while leading client consultations, technical proposals, and business development initiatives.',
+    highlights: [
+      'Developed responsive websites using React.js, TypeScript, Tailwind CSS, and Firebase.',
+      'Collaborated with stakeholders to translate business requirements into scalable solutions.',
+      'Conducted client consultations and technical discussions to drive business growth.',
+    ],
+    tags: ['React.js', 'TypeScript', 'Tailwind CSS', 'Node.js', 'Firebase', 'Git', 'Vercel'],
+  },
+  {
     id: 'EXP_01',
     date: '2024 – Present',
     role: 'B.Tech in CSE (AI/ML)',
@@ -34,7 +48,7 @@ const ITEMS = [
   },
   {
     id: 'EXP_02',
-    date: '2026 – Present',
+    date: '2024 – Present',
     role: 'AI/ML Self-Directed Learner',
     org: 'Independent',
     icon: 'fas fa-laptop-code',
@@ -47,8 +61,6 @@ const ITEMS = [
 export default function Experience() {
   const headRef = useRef(null)
   const headVis = useReveal(headRef, 0.08)
-
-
 
   return (
     <section id="experience">
@@ -105,6 +117,13 @@ function ExpItem({ item, index }) {
           {item.org}
         </p>
         <p className="exp-desc">{item.desc}</p>
+        {item.highlights && item.highlights.length > 0 && (
+          <ul className="exp-highlights">
+            {item.highlights.map((hl, idx) => (
+              <li key={idx} className="exp-highlight-item">{hl}</li>
+            ))}
+          </ul>
+        )}
         <div className="exp-tags">
           {item.tags.map(t => (
             <span key={t} className="exp-tag">{t}</span>
