@@ -36,7 +36,6 @@ const CHIPS = ['Projects', 'Skills', 'Contact', 'About']
 
 /* ─── Component ───────────────────────────────────────────────────────── */
 export default function Chatbot() {
-  const [injected,  setInjected]  = useState(false)
   const [isOpen,    setIsOpen]    = useState(false)
   const [greeted,   setGreeted]   = useState(false)
   const [messages,  setMessages]  = useState([])

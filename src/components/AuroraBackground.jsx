@@ -1,7 +1,3 @@
-import { useEffect, useState } from 'react'
-
-
-
 import './AuroraBackground.css';
 
 export default function AuroraBackground() {

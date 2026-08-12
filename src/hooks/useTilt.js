@@ -130,7 +130,7 @@ export function useTilt({
         el.removeChild(glareEl);
       }
     };
-  }, [max, scale, speed, glare, maxGlare, disabled]);
+  }, [max, scale, speed, glare, maxGlare, disabled, ref]);
 
   return ref;
 }

@@ -428,6 +428,16 @@
   @media (max-width: 768px) {
     .hero-container { padding: 0 24px; }
     #hero { padding: 110px 0 80px; }
+    .hero-ctas {
+      justify-content: center;
+      width: 100%;
+    }
+    .hero-cta-primary,
+    .hero-cta-secondary {
+      width: 100%;
+      justify-content: center;
+      text-align: center;
+    }
     .hero-stats { flex-direction: column; gap: 24px; }
     .hero-stat { border-right: none; padding: 0 0 24px 0 !important; border-bottom: 1px solid var(--border); }
     .hero-stat:last-child { border-bottom: none; padding-bottom: 0 !important; }

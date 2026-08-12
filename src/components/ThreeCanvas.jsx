@@ -1,6 +1,6 @@
 import { useRef, useMemo, useState, useEffect } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Stars, Float, useScroll, ScrollControls } from '@react-three/drei';
+import { Stars, Float } from '@react-three/drei';
 import * as THREE from 'three';
 
 // ─── Neural Core (The glowing brain-like structure) ─────────────
@@ -58,34 +58,35 @@ function NeuralCore() {
   );
 }
 
+// Helper to generate node positions outside component render
+function generateDataNodes(count) {
+  const positions = new Float32Array(count * 3);
+  const colors = new Float32Array(count * 3);
+  const color = new THREE.Color();
+  const palettes = ['#00f0ff', '#00ff88', '#a855f7'];
+
+  for (let i = 0; i < count; i++) {
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.acos(Math.random() * 2 - 1);
+    const radius = 3 + Math.random() * 4;
+
+    positions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
+    positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+    positions[i * 3 + 2] = radius * Math.cos(phi);
+
+    color.set(palettes[Math.floor(Math.random() * palettes.length)]);
+    colors[i * 3] = color.r;
+    colors[i * 3 + 1] = color.g;
+    colors[i * 3 + 2] = color.b;
+  }
+  return { positions, colors };
+}
+
 // ─── Data Nodes (Plexus effect approximations) ─────────────
 function DataNodes({ count = 100 }) {
   const linesRef = useRef();
   
-  // Generate random points in a sphere
-  const { positions, colors } = useMemo(() => {
-    const positions = new Float32Array(count * 3);
-    const colors = new Float32Array(count * 3);
-    const color = new THREE.Color();
-    const palettes = ['#00f0ff', '#00ff88', '#a855f7'];
-
-    for (let i = 0; i < count; i++) {
-      // Random spherical distribution
-      const theta = Math.random() * Math.PI * 2;
-      const phi = Math.acos(Math.random() * 2 - 1);
-      const radius = 3 + Math.random() * 4; // Orbiting between radius 3 and 7
-
-      positions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
-      positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
-      positions[i * 3 + 2] = radius * Math.cos(phi);
-
-      color.set(palettes[Math.floor(Math.random() * palettes.length)]);
-      colors[i * 3] = color.r;
-      colors[i * 3 + 1] = color.g;
-      colors[i * 3 + 2] = color.b;
-    }
-    return { positions, colors };
-  }, [count]);
+  const { positions, colors } = useMemo(() => generateDataNodes(count), [count]);
 
   useFrame((state) => {
     const t = state.clock.getElapsedTime();
@@ -131,11 +132,11 @@ function CursorTrail() {
     const pos = new Float32Array(count * 3);
     const col = new Float32Array(count * 3);
     return [pos, col];
-  }, []);
+  }, [count]);
 
   const history = useRef(new Array(count).fill({ x: 0, y: 0 }));
 
-  useFrame((state) => {
+  useFrame(() => {
     // Convert normalized pointer [-1, 1] to world coordinates
     const targetX = (pointer.x * viewport.width) / 2;
     const targetY = (pointer.y * viewport.height) / 2;
@@ -153,6 +154,7 @@ function CursorTrail() {
 
     for (let i = 0; i < count; i++) {
       const p = history.current[i];
+      /* eslint-disable react-hooks/immutability */
       positions[i * 3] = p.x;
       positions[i * 3 + 1] = p.y;
       positions[i * 3 + 2] = 0;
@@ -162,6 +164,7 @@ function CursorTrail() {
       colors[i * 3] = colorObj.r * alpha;
       colors[i * 3 + 1] = colorObj.g * alpha;
       colors[i * 3 + 2] = colorObj.b * alpha;
+      /* eslint-enable react-hooks/immutability */
     }
     
     pointsRef.current.geometry.attributes.position.needsUpdate = true;
@@ -202,8 +205,10 @@ function CameraRig() {
   
   useFrame(() => {
     // Parallax effect based on pointer
+    /* eslint-disable react-hooks/immutability */
     camera.position.x = THREE.MathUtils.lerp(camera.position.x, pointer.x * 1.5, 0.05);
     camera.position.y = THREE.MathUtils.lerp(camera.position.y, pointer.y * 1.5, 0.05);
+    /* eslint-enable react-hooks/immutability */
     camera.lookAt(0, 0, 0);
   });
   
